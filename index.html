@@ -1,0 +1,1716 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#0a1628" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>MOMBE AI Monitor</title>
+<!-- RemixIcon CDN -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+  /* ---------- Mobile-first base styles with calm colors ---------- */
+  :root {
+    /* Replacing vibrant orange with calm sage green and soft blues */
+    --bg-dark: #0a1628;
+    --bg-darker: #060f1a;
+    --card-bg: #0f1d30;
+    --accent: #5b9279;
+    --accent-hover: #6ba88a;
+    --accent-light: #7db89a;
+    --muted: #9fb3c8;
+    --muted-darker: #6b7e92;
+    --text-primary: #e8f0f8;
+    --good: #4ade80;
+    --warn: #fbbf24;
+    --danger: #f87171;
+    --glass: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Improved gradient with softer tones */
+  html, body {
+    height: 100%;
+    background: linear-gradient(180deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+    color: var(--text-primary);
+    overflow-x: hidden;
+  }
+  
+  /* Splash screen */
+  #splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+  }
+  
+  .splash-logo {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    font-size: 2.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+  
+  .splash-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  .splash-subtext {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  
+  /* Auth screens */
+  #auth-screen {
+    min-height: 100vh;
+    padding: 40px 24px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .auth-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .auth-logo {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 2rem;
+  }
+  
+  .auth-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  .auth-subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  
+  .auth-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    margin-bottom: 16px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  
+  .form-input.with-icon {
+    padding-left: 44px;
+  }
+  
+  .input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted-darker);
+    font-size: 1.1rem;
+  }
+  
+  .input-wrapper {
+    position: relative;
+  }
+  
+  .auth-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  .auth-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* Main app container - hidden by default */
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .app-loaded {
+    opacity: 1;
+  }
+  
+  .app-header {
+    padding: 16px 16px 0;
+    background: linear-gradient(180deg, var(--bg-dark) 0%, transparent 100%);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  .app-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .header-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  
+  .header-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+  }
+  
+  .chip {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  /* Main content area */
+  .app-main {
+    flex: 1;
+    padding: 0 16px 20px;
+  }
+  
+  /* Improved card design with subtle borders */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    margin-bottom: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  /* Redesigned buttons with calm accent color */
+  .big-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--accent);
+    border: 0;
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px rgba(91, 146, 121, 0.2);
+    margin: 10px 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .big-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(91, 146, 121, 0.3);
+  }
+  
+  .big-btn:active {
+    transform: translateY(0);
+  }
+  
+  /* Enhanced stats cards */
+  .stats {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  
+  .stat {
+    flex: 1;
+    padding: 14px 12px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  
+  /* Improved animal cards with hover effect */
+  .animal-card {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .animal-card:hover {
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Better avatar design with icon background */
+  .avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  
+  .avatar i {
+    font-size: 2rem;
+  }
+  
+  .muted {
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+  
+  .status-healthy {
+    color: var(--good);
+    font-weight: 600;
+  }
+  
+  .status-warn {
+    color: var(--warn);
+    font-weight: 600;
+  }
+  
+  .status-critical {
+    color: var(--danger);
+    font-weight: 600;
+  }
+  
+  /* Enhanced alert rows */
+  .alert-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  
+  .small {
+    font-size: 0.8rem;
+  }
+  
+  /* Improved footer navigation */
+  .app-footer {
+    padding: 16px 0;
+    display: flex;
+    gap: 8px;
+    justify-content: space-around;
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg-dark), transparent);
+    backdrop-filter: blur(10px);
+  }
+  
+  .nav-btn {
+    background: transparent;
+    border: 0;
+    color: var(--muted-darker);
+    font-weight: 600;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .nav-btn:hover {
+    color: var(--muted);
+  }
+  
+  .nav-btn.active {
+    color: var(--accent);
+    background: rgba(91, 146, 121, 0.1);
+  }
+  
+  .nav-icon {
+    font-size: 1.2rem;
+  }
+  
+  .nav-label {
+    font-size: 0.7rem;
+  }
+  
+  /* Views */
+  .view {
+    display: none;
+  }
+  
+  .view.active {
+    display: block;
+  }
+  
+  /* Better modal design */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 15, 26, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    padding: 16px;
+  }
+  
+  .modal {
+    width: 100%;
+    max-width: 420px;
+    border-radius: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  
+  .center {
+    text-align: center;
+  }
+  
+  input[type=file] {
+    display: none;
+  }
+  
+  /* Redesigned microphone button */
+  .microphone {
+    width: 80px;
+    height: 80px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 1.8rem;
+    margin: 16px auto;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(91, 146, 121, 0.3);
+  }
+  
+  .microphone:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(91, 146, 121, 0.4);
+  }
+  
+  /* Better progress bar */
+  .progress {
+    height: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  
+  .progress > i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    transition: width 0.1s linear;
+    border-radius: 999px;
+  }
+  
+  /* Enhanced section headers */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .section-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text-primary);
+  }
+  
+  /* Better video styling in camera modal */
+  #camera-video {
+    border-radius: 12px;
+    background: #000;
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+  }
+  
+  /* Simple utility classes */
+  .mb8 {
+    margin-bottom: 8px;
+  }
+  
+  .mt8 {
+    margin-top: 10px;
+  }
+  
+  .text-xs {
+    font-size: 0.75rem;
+  }
+  
+  /* Improved ghost button */
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.03);
+    border-color: var(--muted);
+    color: var(--text-primary);
+  }
+  
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+    position: relative;
+  }
+  
+  .divider-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--card-bg);
+    padding: 0 12px;
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+  
+  /* Profile page styles */
+  .profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .profile-stats {
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  
+  /* Desktop tweaks */
+  @media(min-width: 800px) {
+    .app {
+      max-width: 500px;
+    }
+    
+    .app-header {
+      padding: 24px 24px 0;
+    }
+    
+    .app-main {
+      padding: 0 24px 20px;
+    }
+    
+    h1 {
+      font-size: 1.5rem;
+    }
+    
+    .card {
+      padding: 24px;
+    }
+  }
+  
+  /* Hide elements utility */
+  .hidden {
+    display: none !important;
+  }
+</style>
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-logo">
+      <i class="ri-cow-line"></i>
+    </div>
+    <div class="splash-text">Moombe AI</div>
+    <div class="splash-subtext">Cattle Health Monitoring</div>
+  </div>
+
+  <!-- Auth Screens -->
+  <div id="auth-screen" class="hidden">
+    <!-- Login View -->
+    <div id="auth-login" class="auth-view">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <i class="ri-cow-line"></i>
+        </div>
+        <div class="auth-title">Welcome Back</div>
+        <div class="auth-subtitle">Sign in to continue monitoring</div>
+      </div>
+      
+      <div class="auth-card">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="input-wrapper">
+            <i class="ri-mail-line input-icon"></i>
+            <input type="email" class="form-input with-icon" id="login-email" placeholder="farmer@example.com">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrapper">
+            <i class="ri-lock-line input-icon"></i>
+            <input type="password" class="form-input with-icon" id="login-password" placeholder="Enter your password">
+          </div>
+        </div>
+        
+        <button class="big-btn" id="btn-login">
+          <i class="ri-login-box-line"></i> Sign In
+        </button>
+        
+        <div class="divider">
+          <div class="divider-text">or</div>
+        </div>
+        
+        <div class="center">
+          <button class="btn-ghost" id="btn-go-to-signup">
+            <i class="ri-user-add-line"></i> Create New Account
+          </button>
+        </div>
+      </div>
+      
+      <div class="center">
+        <a href="#" class="auth-link" id="btn-forgot-password">
+          <i class="ri-key-line"></i> Forgot Password?
+        </a>
+      </div>
+    </div>
+    
+    <!-- Signup View -->
+    <div id="auth-signup" class="auth-view hidden">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <i class="ri-cow-line"></i>
+        </div>
+        <div class="auth-title">Create Account</div>
+        <div class="auth-subtitle">Start monitoring your livestock</div>
+      </div>
+      
+      <div class="auth-card">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <div class="input-wrapper">
+            <i class="ri-user-line input-icon"></i>
+            <input type="text" class="form-input with-icon" id="signup-name" placeholder="John Farmer">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="input-wrapper">
+            <i class="ri-mail-line input-icon"></i>
+            <input type="email" class="form-input with-icon" id="signup-email" placeholder="farmer@example.com">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrapper">
+            <i class="ri-lock-line input-icon"></i>
+            <input type="password" class="form-input with-icon" id="signup-password" placeholder="Create a strong password">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <div class="input-wrapper">
+            <i class="ri-lock-line input-icon"></i>
+            <input type="password" class="form-input with-icon" id="signup-confirm" placeholder="Confirm your password">
+          </div>
+        </div>
+        
+        <button class="big-btn" id="btn-signup">
+          <i class="ri-user-add-line"></i> Create Account
+        </button>
+        
+        <div class="divider">
+          <div class="divider-text">or</div>
+        </div>
+        
+        <div class="center">
+          <button class="btn-ghost" id="btn-go-to-login">
+            <i class="ri-login-box-line"></i> Already have an account?
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App (initially hidden) -->
+  <div class="app hidden" id="app">
+    <!-- App Header -->
+    <header class="app-header">
+      <div class="app-header-content">
+        <div>
+        
+        </div>
+        <div class="header-actions">
+          <div class="chip" id="clock">--:--</div>
+          <button class="header-btn" id="btn-logout" title="Logout">
+            <i class="ri-logout-box-r-line"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      <!-- DASHBOARD VIEW -->
+      <div id="view-dashboard" class="view active">
+        <section class="card">
+          <div class="stats">
+            <div class="stat">
+              <div class="muted small">
+                <i class="ri-cow-line"></i> Cattle
+              </div>
+              <div id="stat-animals" style="font-weight:700;font-size:1.3rem;margin-top:6px;color:var(--text-primary)">--</div>
+            </div>
+            <div class="stat">
+              <div class="muted small">
+                <i class="ri-alert-line"></i> Sick
+              </div>
+              <div id="stat-sick" style="font-weight:700;font-size:1.3rem;margin-top:6px;color:var(--warn)">--</div>
+            </div>
+            <div class="stat">
+              <div class="muted small">
+                <i class="ri-heart-pulse-line"></i> Critical
+              </div>
+              <div id="stat-critical" style="font-weight:700;font-size:1.3rem;margin-top:6px;color:var(--danger)">--</div>
+            </div>
+          </div>
+          <div class="mt8">
+            <button class="big-btn" id="btn-scan">
+              <i class="ri-camera-line"></i> Scan Cattle
+            </button>
+            <button class="big-btn" id="btn-record">
+              <i class="ri-mic-line"></i> Record Sound
+            </button>
+            <button class="big-btn" id="btn-injury">
+              <i class="ri-search-line"></i> Injury Scan
+            </button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-header">
+            <div class="section-title">
+              <i class="ri-alarm-warning-line"></i> Recent Alerts
+            </div>
+            <button class="btn-ghost" id="btn-open-alerts">
+              <i class="ri-eye-line"></i> View all
+            </button>
+          </div>
+          <div id="alerts-list"></div>
+        </section>
+
+        <section class="card">
+          <div class="section-header">
+            <div class="section-title">
+              <i class="ri-cow-line"></i> Cattle
+            </div>
+            <div class="muted small">Tap to view profile</div>
+          </div>
+          <div id="animals-list"></div>
+        </section>
+      </div>
+
+      <!-- ANIMAL PROFILE VIEW -->
+      <div id="view-profile" class="view">
+        <section class="card">
+          <div class="profile-header">
+            <div>
+              <div id="profile-name" style="font-weight:700;font-size:1.2rem;margin-bottom:4px">Bessie</div>
+              <div class="muted small" id="profile-tag">Tag QR-011</div>
+            </div>
+            <div class="avatar" id="profile-avatar">
+              <i class="ri-cow-line"></i>
+            </div>
+          </div>
+
+          <div class="profile-stats">
+            <div style="flex:1">
+              <div class="muted small">
+                <i class="ri-weight-line"></i> Weight
+              </div>
+              <div id="profile-weight" style="font-weight:600;margin-top:4px">Normal</div>
+            </div>
+            <div style="flex:1">
+              <div class="muted small">
+                <i class="ri-restaurant-line"></i> Last feed
+              </div>
+              <div id="profile-lastfeed" style="font-weight:600;margin-top:4px">2h</div>
+            </div>
+            <div style="flex:1">
+              <div class="muted small">
+                <i class="ri-heart-line"></i> Health
+              </div>
+              <div id="profile-health" style="font-weight:600;margin-top:4px" class="status-healthy">Good</div>
+            </div>
+          </div>
+
+          <div class="mt8">
+            <button class="big-btn" id="profile-record">
+              <i class="ri-mic-line"></i> Record Sound
+            </button>
+            <button class="big-btn" id="profile-injury">
+              <i class="ri-search-line"></i> Injury Scan
+            </button>
+            <button class="big-btn" id="profile-history">
+              <i class="ri-history-line"></i> View History
+            </button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title" style="margin-bottom:12px">
+            <i class="ri-alarm-warning-line"></i> Alerts for this cattle
+          </div>
+          <div id="profile-alerts"></div>
+        </section>
+
+        <div style="margin-top:12px">
+          <button class="btn-ghost" id="back-to-dashboard">
+            <i class="ri-arrow-left-line"></i> Back to Dashboard
+          </button>
+        </div>
+      </div>
+
+      <!-- ALERTS VIEW -->
+      <div id="view-alerts" class="view">
+        <section class="card">
+          <div class="section-header">
+            <div class="section-title">
+              <i class="ri-alarm-warning-line"></i> All Alerts
+            </div>
+            <div class="chip" id="alerts-count">0</div>
+          </div>
+          <div id="alerts-all"></div>
+        </section>
+        <div style="margin-top:12px">
+          <button class="btn-ghost" id="alerts-back">
+            <i class="ri-arrow-left-line"></i> Back to Dashboard
+          </button>
+        </div>
+      </div>
+
+      <!-- SECURITY CENTER VIEW -->
+      <div id="view-security" class="view">
+        <section class="card">
+          <div class="section-header">
+            <div class="section-title">
+              <i class="ri-shield-keyhole-line"></i> Security Center
+            </div>
+            <div class="muted small">Simulated checks</div>
+          </div>
+          <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="font-weight:600;margin-bottom:4px">
+              <i class="ri-qr-code-line"></i> Tag validation
+            </div>
+            <div id="sec-tag" class="muted small">—</div>
+          </div>
+          <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="font-weight:600;margin-bottom:4px">
+              <i class="ri-radar-line"></i> Sensor integrity
+            </div>
+            <div id="sec-integrity" class="muted small">—</div>
+          </div>
+          <div style="padding:12px 0">
+            <div style="font-weight:600;margin-bottom:4px">
+              <i class="ri-music-2-line"></i> Audio replay detection
+            </div>
+            <div id="sec-replay" class="muted small">—</div>
+          </div>
+        </section>
+        <div style="margin-top:12px">
+          <button class="btn-ghost" id="sec-back">
+            <i class="ri-arrow-left-line"></i> Back to Dashboard
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER NAV -->
+    <footer class="app-footer">
+      <button class="nav-btn active" data-view="dashboard" id="nav-dashboard">
+        <i class="ri-home-4-line nav-icon"></i>
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-btn" data-view="animals" id="nav-animals">
+        <i class="ri-cow-line nav-icon"></i>
+        <span class="nav-label">Cattle</span>
+      </button>
+      <button class="nav-btn" data-view="alerts" id="nav-alerts">
+        <i class="ri-alarm-warning-line nav-icon"></i>
+        <span class="nav-label">Alerts</span>
+      </button>
+      <button class="nav-btn" data-view="security" id="nav-security">
+        <i class="ri-shield-keyhole-line nav-icon"></i>
+        <span class="nav-label">Security</span>
+      </button>
+    </footer>
+  </div>
+
+  <!-- MODALS -->
+  <div id="modal-camera" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="modal">
+      <div class="section-header" style="margin-bottom:16px">
+        <strong style="font-size:1.05rem">
+          <i class="ri-camera-line"></i> Camera — Scan or take photo
+        </strong>
+        <button class="btn-ghost" id="modal-camera-close">
+          <i class="ri-close-line"></i> Close
+        </button>
+      </div>
+      <div class="center">
+        <video id="camera-video" autoplay playsinline></video>
+        <input type="file" accept="image/*" id="camera-file-input">
+        <div style="display:flex;gap:8px;margin-top:16px">
+          <button class="btn-ghost" style="flex:1" id="camera-use-file">
+            <i class="ri-folder-upload-line"></i> Upload
+          </button>
+          <button class="big-btn" style="flex:2;margin:0" id="camera-snap">
+            <i class="ri-camera-line"></i> Capture
+          </button>
+        </div>
+      </div>
+      <div class="mt8 center muted small">Allow camera access or upload a photo</div>
+    </div>
+  </div>
+
+  <div id="modal-audio" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="modal">
+      <div class="section-header" style="margin-bottom:16px">
+        <strong style="font-size:1.05rem">
+          <i class="ri-mic-line"></i> Record Sound (5s)
+        </strong>
+        <button class="btn-ghost" id="modal-audio-close">
+          <i class="ri-close-line"></i> Close
+        </button>
+      </div>
+      <div class="center">
+        <div class="microphone" id="mic-button">
+          <i class="ri-mic-line"></i>
+        </div>
+        <div class="progress"><i id="mic-progress"></i></div>
+        <div class="muted small mt8" id="mic-status">Tap the mic to start recording</div>
+        <div style="margin-top:16px">
+          <button class="btn-ghost" id="mic-cancel">
+            <i class="ri-close-line"></i> Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ===================
+   Temporary MVP JSON - Cattle Focused
+   =================== */
+const SAMPLE_DATA = {
+  animals: [
+    {
+      id: "cow-11",
+      name: "Bessie",
+      species: "Holstein",
+      tag: "QR-011",
+      weight_score: "Normal",
+      last_feed: "2025-12-08T14:20:00Z",
+      health_status: "Good",
+      icon: "ri-cow-line",
+      alerts: []
+    },
+    {
+      id: "cow-12",
+      name: "Daisy",
+      species: "Jersey",
+      tag: "QR-012",
+      weight_score: "Low",
+      last_feed: "2025-12-08T10:00:00Z",
+      health_status: "Warning",
+      icon: "ri-cow-line",
+      alerts: [
+        { id: "a001", type: "Distress sound", severity: "High", timestamp: "2025-12-08T18:12:00Z", message: "Repeated distress calls" }
+      ]
+    },
+    {
+      id: "cow-13",
+      name: "Molly",
+      species: "Angus",
+      tag: "QR-013",
+      weight_score: "Normal",
+      last_feed: "2025-12-08T15:00:00Z",
+      health_status: "Good",
+      icon: "ri-cow-line",
+      alerts: []
+    },
+    {
+      id: "cow-14",
+      name: "Clara",
+      species: "Hereford",
+      tag: "QR-014",
+      weight_score: "High",
+      last_feed: "2025-12-08T12:30:00Z",
+      health_status: "Warning",
+      icon: "ri-cow-line",
+      alerts: [
+        { id: "a002", type: "Weight alert", severity: "Medium", timestamp: "2025-12-08T16:45:00Z", message: "Weight above normal range" }
+      ]
+    }
+  ],
+  alerts: [
+    { alert_id: "a001", animal_id: "cow-12", type: "Distress sound", severity: "High", timestamp: "2025-12-08T18:12:00Z" },
+    { alert_id: "a002", animal_id: "cow-14", type: "Weight alert", severity: "Medium", timestamp: "2025-12-08T16:45:00Z" }
+  ],
+  user: null
+}
+
+/* ============
+   Storage helpers
+   ============ */
+function loadState(){
+  const raw = localStorage.getItem('lam_mvp_v2');
+  if (!raw){
+    localStorage.setItem('lam_mvp_v2', JSON.stringify(SAMPLE_DATA));
+    return JSON.parse(JSON.stringify(SAMPLE_DATA));
+  }
+  try { return JSON.parse(raw); } catch(e){ localStorage.setItem('lam_mvp_v2', JSON.stringify(SAMPLE_DATA)); return JSON.parse(JSON.stringify(SAMPLE_DATA)); }
+}
+function saveState(state){
+  localStorage.setItem('lam_mvp_v2', JSON.stringify(state));
+}
+let STATE = loadState();
+
+/* ====================
+   Utilities & helpers
+   ==================== */
+function el(q, ctx=document) { return ctx.querySelector(q); }
+function els(q, ctx=document) { return Array.from(ctx.querySelectorAll(q)); }
+function fmtTime(iso){ try{ const d=new Date(iso); return d.toLocaleString(); }catch(e){return iso;} }
+function relativeTime(iso){
+  const d=new Date(iso), now=new Date(); const diff=(now-d)/1000; if (diff<60) return Math.round(diff)+'s ago'; if (diff<3600) return Math.round(diff/60)+'m ago'; if (diff<86400) return Math.round(diff/3600)+'h ago'; return Math.round(diff/86400)+'d ago';
+}
+
+/* ====================
+   Application Flow Control
+   ==================== */
+let currentUser = null;
+
+function initApp() {
+  // Show splash screen first
+  const splash = el('#splash-screen');
+  splash.classList.remove('hidden');
+  
+  // After 1.5 seconds, check if user is logged in
+  setTimeout(() => {
+    splash.style.opacity = '0';
+    
+    setTimeout(() => {
+      splash.classList.add('hidden');
+      
+      // Check if user is logged in
+      const userData = localStorage.getItem('lam_user');
+      if (userData) {
+        try {
+          currentUser = JSON.parse(userData);
+          STATE.user = currentUser;
+          showMainApp();
+        } catch(e) {
+          showAuthScreen('login');
+        }
+      } else {
+        showAuthScreen('login');
+      }
+    }, 500);
+  }, 1500);
+}
+
+function showAuthScreen(screen) {
+  const authScreen = el('#auth-screen');
+  const app = el('#app');
+  
+  authScreen.classList.remove('hidden');
+  app.classList.add('hidden');
+  
+  // Show the requested auth screen
+  els('.auth-view').forEach(view => view.classList.add('hidden'));
+  if (screen === 'login') {
+    el('#auth-login').classList.remove('hidden');
+  } else if (screen === 'signup') {
+    el('#auth-signup').classList.remove('hidden');
+  }
+}
+
+function showMainApp() {
+  const authScreen = el('#auth-screen');
+  const app = el('#app');
+  
+  authScreen.classList.add('hidden');
+  app.classList.remove('hidden');
+  
+  // Initialize the app UI
+  setTimeout(() => {
+    app.classList.add('app-loaded');
+    boot();
+  }, 100);
+}
+
+/* ====================
+   Authentication Handlers
+   ==================== */
+el('#btn-login').addEventListener('click', function() {
+  const email = el('#login-email').value.trim();
+  const password = el('#login-password').value.trim();
+  
+  if (!email || !password) {
+    alert('Please enter both email and password');
+    return;
+  }
+  
+  // Simple validation for demo
+  if (email.includes('@') && password.length >= 6) {
+    // Success - create user session
+    currentUser = {
+      id: 'user_' + Date.now(),
+      email: email,
+      name: email.split('@')[0],
+      loginTime: new Date().toISOString()
+    };
+    
+    // Save user to localStorage
+    localStorage.setItem('lam_user', JSON.stringify(currentUser));
+    STATE.user = currentUser;
+    saveState(STATE);
+    
+    // Show main app
+    showMainApp();
+  } else {
+    alert('Invalid credentials. For demo, use any email with @ and password of at least 6 characters.');
+  }
+});
+
+el('#btn-signup').addEventListener('click', function() {
+  const name = el('#signup-name').value.trim();
+  const email = el('#signup-email').value.trim();
+  const password = el('#signup-password').value.trim();
+  const confirm = el('#signup-confirm').value.trim();
+  
+  if (!name || !email || !password || !confirm) {
+    alert('Please fill all fields');
+    return;
+  }
+  
+  if (password !== confirm) {
+    alert('Passwords do not match');
+    return;
+  }
+  
+  if (password.length < 6) {
+    alert('Password must be at least 6 characters');
+    return;
+  }
+  
+  // Success - create user session
+  currentUser = {
+    id: 'user_' + Date.now(),
+    email: email,
+    name: name,
+    loginTime: new Date().toISOString()
+  };
+  
+  // Save user to localStorage
+  localStorage.setItem('lam_user', JSON.stringify(currentUser));
+  STATE.user = currentUser;
+  saveState(STATE);
+  
+  // Show main app
+  showMainApp();
+});
+
+el('#btn-logout').addEventListener('click', function() {
+  if (confirm('Are you sure you want to logout?')) {
+    localStorage.removeItem('lam_user');
+    currentUser = null;
+    STATE.user = null;
+    showAuthScreen('login');
+  }
+});
+
+// Navigation between login/signup screens
+el('#btn-go-to-signup').addEventListener('click', function(e) {
+  e.preventDefault();
+  showAuthScreen('signup');
+});
+
+el('#btn-go-to-login').addEventListener('click', function(e) {
+  e.preventDefault();
+  showAuthScreen('login');
+});
+
+el('#btn-forgot-password').addEventListener('click', function(e) {
+  e.preventDefault();
+  alert('Password reset feature would be implemented in a production app. For demo, just create a new account.');
+});
+
+/* ====================
+   UI rendering
+   ==================== */
+function renderStats(){
+  const animals = STATE.animals.length;
+  const sick = STATE.animals.filter(a=>a.health_status!=='Good').length;
+  const critical = STATE.alerts.filter(a=>a.severity==='High').length;
+  el('#stat-animals').textContent = animals;
+  el('#stat-sick').textContent = sick;
+  el('#stat-critical').textContent = critical;
+}
+
+/* Render animals list on dashboard */
+function renderAnimalsList(){
+  const container = el('#animals-list'); container.innerHTML='';
+  STATE.animals.forEach(a=>{
+    const div=document.createElement('div'); div.className='animal-card';
+    div.dataset.id=a.id;
+    div.innerHTML = `
+      <div class="avatar"><i class="${a.icon || 'ri-cow-line'}"></i></div>
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong style="font-size:1rem">${a.name}</strong><div class="muted small" style="margin-top:2px">${a.species} • ${a.tag}</div></div>
+          <div style="text-align:right"><div class="${a.health_status==='Good'?'status-healthy':(a.health_status==='Warning'?'status-warn':'status-critical')}">${a.health_status}</div><div class="muted small" style="margin-top:2px">${a.weight_score}</div></div>
+        </div>
+      </div>
+    `;
+    div.addEventListener('click', ()=>openProfile(a.id));
+    container.appendChild(div);
+  });
+}
+
+/* Render alerts preview */
+function renderAlertsPreview(){
+  const list = el('#alerts-list'); list.innerHTML='';
+  const recent = STATE.alerts.slice().sort((x,y)=>new Date(y.timestamp)-new Date(x.timestamp)).slice(0,4);
+  if (recent.length===0){ list.innerHTML='<div class="muted small">No alerts</div>'; return; }
+  recent.forEach(a=>{
+    const animal = STATE.animals.find(x=>x.id===a.animal_id);
+    const div=document.createElement('div'); div.className='alert-row';
+    div.innerHTML = `<div class="avatar" style="width:44px;height:44px;font-size:1.2rem"><i class="${animal?animal.icon:'ri-alarm-warning-line'}"></i></div>
+      <div style="flex:1">
+        <div style="font-weight:600;margin-bottom:2px">${animal?animal.name:'Unknown'} — ${a.type}</div>
+        <div class="muted small">${a.severity} • ${relativeTime(a.timestamp)}</div>
+      </div>
+      <div><button class="btn-ghost" data-id="${a.alert_id}">
+        <i class="ri-eye-line"></i> View
+      </button></div>`;
+    div.querySelector('button').addEventListener('click', ()=>openProfile(a.animal_id));
+    list.appendChild(div);
+  });
+}
+
+/* Render full alerts page */
+function renderAllAlerts(){
+  el('#alerts-all').innerHTML='';
+  const all = STATE.alerts.slice().sort((x,y)=>new Date(y.timestamp)-new Date(x.timestamp));
+  el('#alerts-count').textContent = all.length;
+  if (all.length===0){ el('#alerts-all').innerHTML='<div class="muted small">No alerts</div>'; return; }
+  all.forEach(a=>{
+    const animal = STATE.animals.find(x=>x.id===a.animal_id);
+    const div=document.createElement('div'); div.className='alert-row';
+    div.innerHTML = `<div class="avatar" style="width:44px;height:44px;font-size:1.2rem"><i class="${animal?animal.icon:'ri-alarm-warning-line'}"></i></div>
+      <div style="flex:1">
+        <div style="font-weight:600;margin-bottom:2px">${animal?animal.name:'Unknown'} — ${a.type}</div>
+        <div class="muted small">${a.severity} • ${fmtTime(a.timestamp)}</div>
+      </div>
+      <div><button class="btn-ghost" data-id="${a.alert_id}">
+        <i class="ri-external-link-line"></i> Open
+      </button></div>`;
+    div.querySelector('button').addEventListener('click', ()=>openProfile(a.animal_id));
+    el('#alerts-all').appendChild(div);
+  });
+}
+
+/* Profile render */
+function openProfile(animalId){
+  const animal = STATE.animals.find(a=>a.id===animalId);
+  if (!animal) return alert('Animal not found (demo data).');
+  // populate
+  el('#profile-name').textContent = animal.name;
+  el('#profile-tag').textContent = animal.tag;
+  el('#profile-avatar').innerHTML = `<i class="${animal.icon || 'ri-cow-line'}"></i>`;
+  el('#profile-weight').textContent = animal.weight_score;
+  el('#profile-lastfeed').textContent = relativeTime(animal.last_feed);
+  el('#profile-health').textContent = animal.health_status;
+  el('#profile-health').className = animal.health_status==='Good' ? 'status-healthy' : (animal.health_status==='Warning' ? 'status-warn' : 'status-critical');
+  // alerts for the animal
+  const pa = el('#profile-alerts'); pa.innerHTML='';
+  const alerts = STATE.alerts.filter(x=>x.animal_id===animalId).sort((x,y)=>new Date(y.timestamp)-new Date(x.timestamp));
+  if (alerts.length===0) pa.innerHTML='<div class="muted small">No alerts</div>';
+  alerts.forEach(al=>{
+    const d=document.createElement('div'); d.className='alert-row';
+    d.innerHTML = `<div class="avatar" style="width:44px;height:44px;font-size:1.2rem"><i class="${animal.icon || 'ri-cow-line'}"></i></div>
+      <div style="flex:1"><div style="font-weight:600;margin-bottom:2px">${al.type}</div><div class="muted small">${fmtTime(al.timestamp)}</div></div>
+      <div><span class="${al.severity==='High'?'status-critical':(al.severity==='Medium'?'status-warn':'status-healthy')}">${al.severity}</span></div>`;
+    pa.appendChild(d);
+  });
+
+  // switch views
+  showView('profile');
+  // attach profile-specific actions
+  el('#profile-record').onclick = ()=>openAudioModal(animal.id);
+  el('#profile-injury').onclick = ()=>openCameraModal('injury', animal.id);
+  el('#profile-history').onclick = ()=>alert('History demo (not implemented) — would show past health records.');
+}
+
+/* Navigation: show specific view */
+function showView(view){
+  // hide all views
+  els('.view').forEach(v=>v.classList.remove('active'));
+  // show requested view
+  el(`#view-${view}`).classList.add('active');
+  
+  // update footer nav
+  els('.nav-btn').forEach(b=>b.classList.remove('active'));
+  el(`#nav-${view}`).classList.add('active');
+}
+
+/* Render security center (mock checks) */
+function renderSecurity(){
+  // simple simulated checks
+  const tag = { tag_valid: true, tag_type: "NFC", integrity: "OK" };
+  const integrity = { data_tampering_detected: false };
+  const replay = { audio_fingerprint: "unique-123", replay_attack: false };
+  el('#sec-tag').textContent = `Tag valid: ${tag.tag_valid} • type: ${tag.tag_type}`;
+  el('#sec-integrity').textContent = `Tampering: ${integrity.data_tampering_detected ? 'DETECTED' : 'OK'}`;
+  el('#sec-replay').textContent = `Replay attack: ${replay.replay_attack ? 'YES' : 'NO'}`;
+}
+
+/* Boot & render everything */
+function boot(){
+  renderStats();
+  renderAnimalsList();
+  renderAlertsPreview();
+  renderAllAlerts();
+  renderSecurity();
+  showView('dashboard');
+  // clock
+  setInterval(()=>el('#clock').textContent = new Date().toLocaleTimeString(), 1000);
+}
+
+/* ==========================
+   Simple Mock AI processors
+   ========================== */
+
+/* Mock vision AI: analyze photo and return object */
+function mockVisionAIAnalyze(imageBlob){
+  // This is a mock. In real app you'd send image to an ML model or run on-device inference.
+  // We'll randomly decide presence of wound or weight issues to demonstrate flow.
+  const rnd = Math.random();
+  if (rnd < 0.15) {
+    return { wound_detected: true, wound_location: "hind leg", weight_score: "Low", confidence: 0.92 };
+  } else if (rnd < 0.35) {
+    return { wound_detected: false, wound_location: null, weight_score: "Low", confidence: 0.78 };
+  } else {
+    return { wound_detected: false, wound_location: null, weight_score: "Normal", confidence: 0.95 };
+  }
+}
+
+/* Mock audio AI: analyze short recording and return object */
+function mockAudioAIAnalyze(audioBlob){
+  // This is a mock. Real system would use trained audio classifier.
+  const rnd = Math.random();
+  if (rnd < 0.12) return { audio_result: "Distress sound detected", risk_level: "High" };
+  if (rnd < 0.35) return { audio_result: "Cough detected", risk_level: "Medium" };
+  return { audio_result: "Normal", risk_level: "Low" };
+}
+
+/* ===============================
+   Camera modal & photo processing
+   =============================== */
+let cameraStream = null;
+let currentCameraMode = null; // 'scan' or 'injury'
+let currentCameraTargetId = null; // animal id when triggered from profile
+
+async function openCameraModal(mode='scan', targetId=null){
+  currentCameraMode = mode;
+  currentCameraTargetId = targetId;
+  el('#modal-camera').classList.remove('hidden');
+  el('#modal-camera').ariaHidden = 'false';
+  // start camera if available
+  const video = el('#camera-video');
+  try{
+    cameraStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}, audio:false});
+    video.srcObject = cameraStream;
+    video.play();
+  }catch(e){
+    video.srcObject = null;
+    console.warn('Camera not available, use file upload fallback', e);
+  }
+}
+
+/* Close camera modal */
+function closeCameraModal(){
+  el('#modal-camera').classList.add('hidden');
+  el('#modal-camera').ariaHidden = 'true';
+  // stop stream
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t=>t.stop());
+    cameraStream = null;
+  }
+}
+
+/* Snapshot from video */
+async function captureFromVideo(){
+  const video = el('#camera-video');
+  if (!video || video.readyState < 2) {
+    // fallback: user should upload file
+    alert('Camera not ready. You can upload a photo instead.');
+    return null;
+  }
+  const canvas = document.createElement('canvas'); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d'); ctx.drawImage(video,0,0,canvas.width,canvas.height);
+  return await new Promise(res=>canvas.toBlob(res,'image/jpeg',0.85));
+}
+
+/* File upload fallback */
+el('#camera-use-file').onclick = ()=>el('#camera-file-input').click();
+el('#camera-file-input').onchange = async (ev)=>{
+  const f = ev.target.files[0]; if (!f) return;
+  await processCapturedPhoto(f);
+  el('#camera-file-input').value = '';
+}
+
+/* When user presses capture */
+el('#camera-snap').onclick = async ()=>{
+  const blob = await captureFromVideo();
+  if (blob) await processCapturedPhoto(blob);
+}
+
+/* Process photo result */
+async function processCapturedPhoto(blob){
+  // Run mock vision AI
+  const result = mockVisionAIAnalyze(blob);
+  // If called from profile -> update animal
+  if (currentCameraTargetId){
+    // add alert if wound detected or weight low
+    const animal = STATE.animals.find(a=>a.id===currentCameraTargetId);
+    if (!animal) { alert('Animal missing'); closeCameraModal(); return; }
+    // create alert if problem
+    if (result.wound_detected || result.weight_score!=='Normal'){
+      const alertId = 'a'+Math.floor(Math.random()*1000000);
+      const severity = result.wound_detected ? 'High' : (result.weight_score==='Low' ? 'Medium' : 'Low');
+      const newAlert = { alert_id: alertId, animal_id: animal.id, type: result.wound_detected ? 'Wound detected' : 'Low weight', severity, timestamp: (new Date()).toISOString() };
+      STATE.alerts.push(newAlert);
+      animal.alerts = animal.alerts || []; animal.alerts.push(newAlert);
+      animal.health_status = severity==='High' ? 'Critical' : 'Warning';
+    } else {
+      // minor update if normal
+      animal.health_status = 'Good';
+    }
+    saveState(STATE);
+    renderAllAlerts(); renderAlertsPreview(); renderAnimalsList(); renderStats();
+    alert(`Vision AI result: wound=${result.wound_detected} weight=${result.weight_score} (confidence ${result.confidence})`);
+  } else {
+    // If scanning (from dashboard), we simulate tag/face recognition:
+    // pick a random animal that best matches (or first)
+    const matched = STATE.animals[Math.floor(Math.random()*STATE.animals.length)];
+    alert(`Scanned — matched: ${matched.name} (${matched.tag})\nVision AI: weight=${result.weight_score}`);
+    openProfile(matched.id);
+  }
+  closeCameraModal();
+}
+
+/* Open camera modal utility */
+el('#btn-scan').onclick = ()=>openCameraModal('scan', null);
+el('#btn-injury').onclick = ()=>openCameraModal('injury', null);
+el('#modal-camera-close').onclick = ()=>closeCameraModal();
+
+/* ==========================
+   Audio modal & recording
+   ========================== */
+let audioRecorder = null;
+let audioChunks = [];
+let micTimer = null;
+let micCountdown = 5;
+
+function openAudioModal(targetAnimalId=null){
+  currentAudioTarget = targetAnimalId || null;
+  el('#modal-audio').classList.remove('hidden'); el('#modal-audio').ariaHidden='false';
+  el('#mic-status').textContent = 'Tap the mic to start recording';
+  el('#mic-progress').style.width = '0%';
+  // attach handler
+  el('#mic-button').onclick = startRecording;
+  el('#mic-cancel').onclick = ()=>{
+    stopRecording(true);
+    closeAudioModal();
+  };
+}
+
+function closeAudioModal(){
+  el('#modal-audio').classList.add('hidden'); el('#modal-audio').ariaHidden='true';
+  if (audioRecorder) stopRecording(true);
+}
+
+el('#modal-audio-close').onclick = closeAudioModal;
+
+let currentAudioTarget = null;
+
+/* Start recording (5 sec) using MediaRecorder */
+async function startRecording(){
+  // request mic
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video:false });
+    audioChunks = [];
+    audioRecorder = new MediaRecorder(stream);
+    audioRecorder.ondataavailable = e=>audioChunks.push(e.data);
+    audioRecorder.onstop = async ()=>{
+      const blob = new Blob(audioChunks,{type:'audio/webm'});
+      await handleRecordedAudio(blob);
+      // stop tracks
+      stream.getTracks().forEach(t=>t.stop());
+      audioRecorder=null;
+    };
+    audioRecorder.start();
+    el('#mic-status').textContent = 'Recording...';
+    // animate progress for 5s
+    const dur = 5; let t=0;
+    el('#mic-progress').style.width = '0%';
+    micTimer = setInterval(()=>{ t+=0.1; const pct = Math.min(100, (t/dur)*100); el('#mic-progress').style.width = pct+'%'; if (t>=dur){ clearInterval(micTimer); audioRecorder.stop(); } }, 100);
+  }catch(e){
+    alert('Microphone access denied or not available.');
+    console.error(e);
+  }
+}
+
+/* Stop recording utility */
+function stopRecording(force=false){
+  if (audioRecorder && audioRecorder.state !== 'inactive') {
+    audioRecorder.stop();
+  }
+  if (micTimer) clearInterval(micTimer);
+  el('#mic-progress').style.width = '0%';
+}
+
+/* After recording -> call mock audio AI */
+async function handleRecordedAudio(blob){
+  // Run mock audio AI
+  const result = mockAudioAIAnalyze(blob);
+  // Attach alert if problem and target exists
+  if (currentAudioTarget){
+    const animal = STATE.animals.find(a=>a.id===currentAudioTarget);
+    if (!animal) { alert('Target animal missing'); return; }
+    if (result.risk_level === 'High' || result.risk_level === 'Medium'){
+      const aId = 'a'+Math.floor(Math.random()*1000000);
+      const newAlert = { alert_id: aId, animal_id: animal.id, type: result.audio_result, severity: result.risk_level==='High' ? 'High':'Medium', timestamp: (new Date()).toISOString() };
+      STATE.alerts.push(newAlert);
+      animal.alerts = animal.alerts || []; animal.alerts.push(newAlert);
+      animal.health_status = result.risk_level==='High' ? 'Critical' : 'Warning';
+      saveState(STATE); renderAllAlerts(); renderAlertsPreview(); renderAnimalsList(); renderStats();
+      alert(`Audio AI: ${result.audio_result} (risk ${result.risk_level}) — alert created for ${animal.name}`);
+    } else {
+      alert('Audio AI: Normal');
+    }
+  } else {
+    // dashboard-record -> demo: pick random animal
+    const matched = STATE.animals[Math.floor(Math.random()*STATE.animals.length)];
+    if (result.risk_level!=='Low'){
+      const aId = 'a'+Math.floor(Math.random()*1000000);
+      const newAlert = { alert_id: aId, animal_id: matched.id, type: result.audio_result, severity: result.risk_level==='High' ? 'High':'Medium', timestamp: (new Date()).toISOString() };
+      STATE.alerts.push(newAlert);
+      matched.alerts = matched.alerts || []; matched.alerts.push(newAlert);
+      matched.health_status = result.risk_level==='High' ? 'Critical' : 'Warning';
+      saveState(STATE); renderAllAlerts(); renderAlertsPreview(); renderAnimalsList(); renderStats();
+      alert(`Audio AI: ${result.audio_result} — created alert for ${matched.name}`);
+    } else {
+      alert(`Audio AI: ${result.audio_result} — no issues`);
+    }
+  }
+  closeAudioModal();
+}
+
+/* Dashboard record button */
+el('#btn-record').onclick = ()=>openAudioModal(null);
+
+/* =====================
+   Small UI bindings
+   ===================== */
+el('#back-to-dashboard').onclick = ()=>{ showView('dashboard'); }
+el('#btn-open-alerts').onclick = ()=>{ showView('alerts'); }
+el('#alerts-back').onclick = ()=>{ showView('dashboard'); }
+el('#sec-back').onclick = ()=>{ showView('dashboard'); }
+
+// Footer navigation
+els('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const view = this.dataset.view;
+    showView(view);
+    if (view === 'security') renderSecurity();
+  });
+});
+
+el('#nav-animals').onclick = ()=>{ 
+  showView('dashboard'); 
+  // Scroll to animals section
+  setTimeout(() => {
+    const animalsSection = document.querySelector('#animals-list').closest('.card');
+    animalsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+/* Security center demo toggle - simulate tampering detection every 10s */
+setInterval(()=>{
+  // small random flip to demo 'tampering detected' once in a while
+  if (el('#view-security').classList.contains('active')) {
+    const tamper = Math.random() < 0.05;
+    el('#sec-integrity').textContent = `Tampering: ${tamper ? 'DETECTED' : 'OK'}`;
+  }
+}, 10000);
+
+/* Ensure rendering refresh after state updates (useful while demoing) */
+window.refreshUI = ()=>{
+  renderStats(); renderAnimalsList(); renderAlertsPreview(); renderAllAlerts();
+};
+
+/* Immediately expose STATE for debugging in dev console */
+window._LAM_STATE = STATE;
+
+/* =====================
+   Initialize App
+   ===================== */
+document.addEventListener('DOMContentLoaded', initApp);
+
+</script>
+</body>
+</html>
