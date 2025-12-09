@@ -3,30 +3,32 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="theme-color" content="#0a1628" />
+<meta name="theme-color" content="#5b9279" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>MOMBE AI Monitor</title>
+<title>Moombo AI Monitor</title>
 <!-- RemixIcon CDN -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 <style>
-  /* ---------- Mobile-first base styles with calm colors ---------- */
+  /* ---------- Mobile-first base styles with clean white theme ---------- */
   :root {
-    /* Replacing vibrant orange with calm sage green and soft blues */
-    --bg-dark: #0a1628;
-    --bg-darker: #060f1a;
-    --card-bg: #0f1d30;
+    /* Clean white theme with green accents */
+    --bg-light: #ffffff;
+    --bg-lighter: #f8f9fa;
+    --card-bg: #ffffff;
     --accent: #5b9279;
-    --accent-hover: #6ba88a;
+    --accent-hover: #4a8069;
     --accent-light: #7db89a;
-    --muted: #9fb3c8;
-    --muted-darker: #6b7e92;
-    --text-primary: #e8f0f8;
-    --good: #4ade80;
-    --warn: #fbbf24;
-    --danger: #f87171;
-    --glass: rgba(255,255,255,0.04);
-    --border: rgba(255,255,255,0.08);
+    --muted: #6c757d;
+    --muted-darker: #495057;
+    --text-primary: #212529;
+    --text-secondary: #495057;
+    --good: #28a745;
+    --warn: #ffc107;
+    --danger: #dc3545;
+    --glass: rgba(0,0,0,0.04);
+    --border: #e9ecef;
+    --shadow: rgba(0, 0, 0, 0.08);
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
   
@@ -36,10 +38,10 @@
     padding: 0;
   }
   
-  /* Improved gradient with softer tones */
+  /* Clean white background */
   html, body {
     height: 100%;
-    background: linear-gradient(180deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+    background: var(--bg-light);
     color: var(--text-primary);
     overflow-x: hidden;
   }
@@ -51,7 +53,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+    background: var(--bg-light);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -63,20 +65,22 @@
   .splash-logo {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    background: chocolate;
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 24px;
     font-size: 2.5rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    color: white;
+    box-shadow: 0 8px 24px var(--shadow);
   }
   
   .splash-text {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 8px;
+    color: var(--text-primary);
   }
   
   .splash-subtext {
@@ -110,12 +114,14 @@
     justify-content: center;
     margin: 0 auto 16px;
     font-size: 2rem;
+    color: white;
   }
   
   .auth-title {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 8px;
+    color: var(--text-primary);
   }
   
   .auth-subtitle {
@@ -128,7 +134,7 @@
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 16px var(--shadow);
     margin-bottom: 16px;
   }
   
@@ -147,17 +153,19 @@
   .form-input {
     width: 100%;
     padding: 14px 16px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-lighter);
     border: 1px solid var(--border);
     border-radius: 12px;
     color: var(--text-primary);
     font-size: 1rem;
-    transition: border-color 0.2s ease;
+    transition: all 0.2s ease;
   }
   
   .form-input:focus {
     outline: none;
     border-color: var(--accent);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(91, 146, 121, 0.1);
   }
   
   .form-input.with-icon {
@@ -205,10 +213,11 @@
   
   .app-header {
     padding: 16px 16px 0;
-    background: linear-gradient(180deg, var(--bg-dark) 0%, transparent 100%);
+    background: var(--bg-light);
     position: sticky;
     top: 0;
     z-index: 10;
+    border-bottom: 1px solid var(--border);
   }
   
   .app-header-content {
@@ -216,19 +225,20 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
   
   h1 {
     font-size: 1.25rem;
     font-weight: 700;
     letter-spacing: -0.02em;
+    color: var(--text-primary);
   }
   
   .header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
   }
   
   .header-btn {
@@ -247,67 +257,79 @@
   }
   
   .header-btn:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-primary);
+    background: var(--bg-lighter);
+    color: var(--accent);
   }
   
-  .chip {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: var(--glass);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 0.8rem;
-    font-weight: 500;
+  .header-btn.logout {
+    color: var(--danger);
+  }
+  
+  .header-btn.logout:hover {
+    background: rgba(220, 53, 69, 0.1);
   }
   
   /* Main content area */
   .app-main {
     flex: 1;
-    padding: 0 16px 20px;
+    padding: 16px 16px 20px;
   }
   
-  /* Improved card design with subtle borders */
+  /* Clean card design with subtle shadows */
   .card {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 18px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    box-shadow: 0 2px 8px var(--shadow);
     margin-bottom: 16px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   
-  /* Redesigned buttons with calm accent color */
+  .card:hover {
+    box-shadow: 0 4px 12px var(--shadow);
+  }
+  
+  /* Primary button with accent color */
   .big-btn {
     display: block;
     width: 100%;
-    padding: 14px 16px;
+    padding: 16px 20px;
     border-radius: 12px;
     background: var(--accent);
     border: 0;
     color: white;
-    font-weight: 600;
-    font-size: 0.95rem;
-    box-shadow: 0 2px 8px rgba(91, 146, 121, 0.2);
+    font-size: 1rem;
     margin: 10px 0;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
   }
   
   .big-btn:hover {
     background: var(--accent-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(91, 146, 121, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(91, 146, 121, 0.25);
   }
   
   .big-btn:active {
     transform: translateY(0);
+  }
+  
+  /* Scan button at the top */
+  .scan-top-btn {
+   background-color: rgba(210, 105, 30, 0.845);
+    color: white;
+    padding: 18px;
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+  }
+  
+  .scan-top-btn i {
+    font-size: 1.3rem;
   }
   
   /* Enhanced stats cards */
@@ -315,16 +337,22 @@
     display: flex;
     gap: 10px;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
   
   .stat {
     flex: 1;
-    padding: 14px 12px;
+    padding: 16px 12px;
     border-radius: 12px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    background: var(--bg-lighter);
     border: 1px solid var(--border);
     text-align: center;
+    transition: all 0.2s ease;
+  }
+  
+  .stat:hover {
+    background: white;
+    border-color: var(--accent-light);
   }
   
   /* Improved animal cards with hover effect */
@@ -332,9 +360,9 @@
     display: flex;
     gap: 12px;
     align-items: center;
-    padding: 14px;
+    padding: 16px;
     border-radius: 12px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    background: var(--bg-lighter);
     border: 1px solid var(--border);
     margin-bottom: 10px;
     cursor: pointer;
@@ -342,12 +370,13 @@
   }
   
   .animal-card:hover {
-    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    background: white;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px var(--shadow);
+    border-color: var(--accent-light);
   }
   
-  /* Better avatar design with icon background */
+  /* Avatar design with icon background */
   .avatar {
     width: 56px;
     height: 56px;
@@ -359,6 +388,7 @@
     font-weight: 700;
     font-size: 1.5rem;
     flex-shrink: 0;
+    color: white;
   }
   
   .avatar i {
@@ -390,26 +420,33 @@
     display: flex;
     gap: 10px;
     align-items: center;
-    padding: 12px;
+    padding: 14px;
     border-radius: 10px;
-    background: rgba(255,255,255,0.02);
+    background: var(--bg-lighter);
     border: 1px solid var(--border);
     margin-bottom: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  .alert-row:hover {
+    background: white;
+    border-color: var(--accent-light);
   }
   
   .small {
     font-size: 0.8rem;
   }
   
-  /* Improved footer navigation */
+  /* Footer navigation */
   .app-footer {
-    padding: 16px 0;
+    padding: 12px 0;
     display: flex;
     gap: 8px;
     justify-content: space-around;
     position: sticky;
     bottom: 0;
-    background: linear-gradient(to top, var(--bg-dark), transparent);
+    background: var(--bg-light);
+    border-top: 1px solid var(--border);
     backdrop-filter: blur(10px);
   }
   
@@ -430,7 +467,8 @@
   }
   
   .nav-btn:hover {
-    color: var(--muted);
+    color: var(--accent);
+    background: var(--bg-lighter);
   }
   
   .nav-btn.active {
@@ -455,11 +493,11 @@
     display: block;
   }
   
-  /* Better modal design */
+  /* Modal design */
   .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(6, 15, 26, 0.85);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -474,8 +512,8 @@
     border-radius: 16px;
     background: var(--card-bg);
     border: 1px solid var(--border);
-    padding: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   }
   
   .center {
@@ -486,37 +524,14 @@
     display: none;
   }
   
-  /* Redesigned microphone button */
-  .microphone {
-    width: 80px;
-    height: 80px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-light));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    color: white;
-    font-size: 1.8rem;
-    margin: 16px auto;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 16px rgba(91, 146, 121, 0.3);
-  }
-  
-  .microphone:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(91, 146, 121, 0.4);
-  }
-  
   /* Better progress bar */
   .progress {
-    height: 10px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
+    height: 8px;
+    background: var(--bg-lighter);
     border-radius: 999px;
     overflow: hidden;
-    margin-top: 12px;
+    margin-top: 16px;
+    margin-bottom: 8px;
   }
   
   .progress > i {
@@ -533,22 +548,33 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
   
   .section-title {
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     color: var(--text-primary);
   }
   
-  /* Better video styling in camera modal */
+  /* Video styling in camera modal */
   #camera-video {
     border-radius: 12px;
     background: #000;
     width: 100%;
     max-height: 300px;
     object-fit: cover;
+    margin-bottom: 16px;
+  }
+  
+  /* Camera preview image */
+  #camera-preview {
+    border-radius: 12px;
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    margin-bottom: 16px;
+    display: none;
   }
   
   /* Simple utility classes */
@@ -564,25 +590,25 @@
     font-size: 0.75rem;
   }
   
-  /* Improved ghost button */
+  /* Ghost button */
   .btn-ghost {
     background: transparent;
     border: 1px solid var(--border);
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
     color: var(--muted);
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
   }
   
   .btn-ghost:hover {
-    background: rgba(255,255,255,0.03);
+    background: var(--bg-lighter);
     border-color: var(--muted);
     color: var(--text-primary);
   }
@@ -610,16 +636,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
   
   .profile-stats {
     display: flex;
     gap: 16px;
     justify-content: space-between;
-    padding: 16px 0;
+    padding: 20px 0;
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
+    margin: 20px 0;
   }
   
   /* Desktop tweaks */
@@ -629,11 +656,11 @@
     }
     
     .app-header {
-      padding: 24px 24px 0;
+      padding: 20px 24px 0;
     }
     
     .app-main {
-      padding: 0 24px 20px;
+      padding: 20px 24px 20px;
     }
     
     h1 {
@@ -649,17 +676,49 @@
   .hidden {
     display: none !important;
   }
+  
+  /* Camera action buttons */
+  .camera-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  
+  .camera-actions .btn-ghost {
+    flex: 1;
+  }
+  
+  .camera-actions .big-btn {
+    flex: 2;
+    margin: 0;
+  }
+  
+  /* Loading indicator */
+  .loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-top: 2px solid var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 </style>
 </head>
 <body>
   <!-- Splash Screen -->
   <div id="splash-screen">
     <div class="splash-logo">
-      <i class="ri-cow-line"></i>
+          <img src="/cow.png"  width="40" alt="">
     </div>
-    <div class="splash-text">Moombe AI</div>
-    <div class="splash-subtext">Cattle Health Monitoring</div>
-  </div>
+    <div class="splash-text">M<span style="color: chocolate;">oo</span>mbo</div>
+    <div class="splash-subtext">Intelligent Livestock Management</div>
+  </div> 
 
   <!-- Auth Screens -->
   <div id="auth-screen" class="hidden">
@@ -667,10 +726,10 @@
     <div id="auth-login" class="auth-view">
       <div class="auth-header">
         <div class="auth-logo">
-          <i class="ri-cow-line"></i>
+          <img src="/cow.png" alt="">
         </div>
         <div class="auth-title">Welcome Back</div>
-        <div class="auth-subtitle">Sign in to continue monitoring</div>
+        <div class="auth-subtitle">Sign in to monitor your cattle</div>
       </div>
       
       <div class="auth-card">
@@ -719,7 +778,7 @@
           <i class="ri-cow-line"></i>
         </div>
         <div class="auth-title">Create Account</div>
-        <div class="auth-subtitle">Start monitoring your livestock</div>
+        <div class="auth-subtitle">Start monitoring your cattle</div>
       </div>
       
       <div class="auth-card">
@@ -778,11 +837,14 @@
     <header class="app-header">
       <div class="app-header-content">
         <div>
-        
+          <h1>M<span style="color: chocolate;">oo</span>mbo</h1>
+          <div class="muted text-xs">Your livestock management assistant</div>
         </div>
         <div class="header-actions">
-          <div class="chip" id="clock">--:--</div>
-          <button class="header-btn" id="btn-logout" title="Logout">
+          <button class="header-btn" id="btn-profile" title="Profile">
+            <i class="ri-user-line"></i>
+          </button>
+          <button class="header-btn logout" id="btn-logout" title="Logout">
             <i class="ri-logout-box-r-line"></i>
           </button>
         </div>
@@ -793,37 +855,31 @@
     <main class="app-main">
       <!-- DASHBOARD VIEW -->
       <div id="view-dashboard" class="view active">
+        <!-- Scan Button at Top -->
+        <button class="big-btn scan-top-btn" id="btn-scan-top">
+          <i class="ri-camera-line"></i> Scan Cattle
+        </button>
+
         <section class="card">
           <div class="stats">
             <div class="stat">
               <div class="muted small">
-                <i class="ri-cow-line"></i> Cattle
+                <i class="ri-cow-line"></i> Total Cattle
               </div>
-              <div id="stat-animals" style="font-weight:700;font-size:1.3rem;margin-top:6px;color:var(--text-primary)">--</div>
+              <div id="stat-animals" style="font-weight:700;font-size:1.4rem;margin-top:6px;color:var(--text-primary)">--</div>
             </div>
             <div class="stat">
               <div class="muted small">
-                <i class="ri-alert-line"></i> Sick
+                <i class="ri-heart-line"></i> Healthy
               </div>
-              <div id="stat-sick" style="font-weight:700;font-size:1.3rem;margin-top:6px;color:var(--warn)">--</div>
+              <div id="stat-healthy" style="font-weight:700;font-size:1.4rem;margin-top:6px;color:var(--good)">--</div>
             </div>
             <div class="stat">
               <div class="muted small">
-                <i class="ri-heart-pulse-line"></i> Critical
+                <i class="ri-alert-line"></i> Needs Attention
               </div>
-              <div id="stat-critical" style="font-weight:700;font-size:1.3rem;margin-top:6px;color:var(--danger)">--</div>
+              <div id="stat-sick" style="font-weight:700;font-size:1.4rem;margin-top:6px;color:var(--warn)">--</div>
             </div>
-          </div>
-          <div class="mt8">
-            <button class="big-btn" id="btn-scan">
-              <i class="ri-camera-line"></i> Scan Cattle
-            </button>
-            <button class="big-btn" id="btn-record">
-              <i class="ri-mic-line"></i> Record Sound
-            </button>
-            <button class="big-btn" id="btn-injury">
-              <i class="ri-search-line"></i> Injury Scan
-            </button>
           </div>
         </section>
 
@@ -842,9 +898,9 @@
         <section class="card">
           <div class="section-header">
             <div class="section-title">
-              <i class="ri-cow-line"></i> Cattle
+              <i class="ri-cow-line"></i> Your Cattle
             </div>
-            <div class="muted small">Tap to view profile</div>
+            <div class="muted small">Tap to view details</div>
           </div>
           <div id="animals-list"></div>
         </section>
@@ -855,7 +911,7 @@
         <section class="card">
           <div class="profile-header">
             <div>
-              <div id="profile-name" style="font-weight:700;font-size:1.2rem;margin-bottom:4px">Bessie</div>
+              <div id="profile-name" style="font-weight:700;font-size:1.3rem;margin-bottom:4px">Bessie</div>
               <div class="muted small" id="profile-tag">Tag QR-011</div>
             </div>
             <div class="avatar" id="profile-avatar">
@@ -872,9 +928,9 @@
             </div>
             <div style="flex:1">
               <div class="muted small">
-                <i class="ri-restaurant-line"></i> Last feed
+                <i class="ri-restaurant-line"></i> Last Feed
               </div>
-              <div id="profile-lastfeed" style="font-weight:600;margin-top:4px">2h</div>
+              <div id="profile-lastfeed" style="font-weight:600;margin-top:4px">2h ago</div>
             </div>
             <div style="flex:1">
               <div class="muted small">
@@ -885,21 +941,18 @@
           </div>
 
           <div class="mt8">
-            <button class="big-btn" id="profile-record">
-              <i class="ri-mic-line"></i> Record Sound
-            </button>
-            <button class="big-btn" id="profile-injury">
-              <i class="ri-search-line"></i> Injury Scan
+            <button class="big-btn" id="profile-scan">
+              <i class="ri-camera-line"></i> Scan this Cattle
             </button>
             <button class="big-btn" id="profile-history">
-              <i class="ri-history-line"></i> View History
+              <i class="ri-history-line"></i> View Health History
             </button>
           </div>
         </section>
 
         <section class="card">
           <div class="section-title" style="margin-bottom:12px">
-            <i class="ri-alarm-warning-line"></i> Alerts for this cattle
+            <i class="ri-alarm-warning-line"></i> Health Alerts
           </div>
           <div id="profile-alerts"></div>
         </section>
@@ -936,7 +989,7 @@
             <div class="section-title">
               <i class="ri-shield-keyhole-line"></i> Security Center
             </div>
-            <div class="muted small">Simulated checks</div>
+            <div class="muted small">System integrity checks</div>
           </div>
           <div style="padding:12px 0;border-bottom:1px solid var(--border)">
             <div style="font-weight:600;margin-bottom:4px">
@@ -969,70 +1022,58 @@
     <footer class="app-footer">
       <button class="nav-btn active" data-view="dashboard" id="nav-dashboard">
         <i class="ri-home-4-line nav-icon"></i>
-        <span class="nav-label">Home</span>
+        
       </button>
       <button class="nav-btn" data-view="animals" id="nav-animals">
-        <i class="ri-cow-line nav-icon"></i>
-        <span class="nav-label">Cattle</span>
+        <img src="/cow.png" width="30" alt="">
+        
       </button>
       <button class="nav-btn" data-view="alerts" id="nav-alerts">
         <i class="ri-alarm-warning-line nav-icon"></i>
-        <span class="nav-label">Alerts</span>
+      
       </button>
       <button class="nav-btn" data-view="security" id="nav-security">
         <i class="ri-shield-keyhole-line nav-icon"></i>
-        <span class="nav-label">Security</span>
+       
       </button>
     </footer>
   </div>
 
-  <!-- MODALS -->
+  <!-- CAMERA MODAL -->
   <div id="modal-camera" class="modal-backdrop hidden" aria-hidden="true">
     <div class="modal">
       <div class="section-header" style="margin-bottom:16px">
-        <strong style="font-size:1.05rem">
-          <i class="ri-camera-line"></i> Camera — Scan or take photo
+        <strong style="font-size:1.1rem">
+          <i class="ri-camera-line"></i> Scan Cattle
         </strong>
         <button class="btn-ghost" id="modal-camera-close">
           <i class="ri-close-line"></i> Close
         </button>
       </div>
+      
       <div class="center">
         <video id="camera-video" autoplay playsinline></video>
+        <img id="camera-preview" alt="Preview">
+        
+        <div class="muted small mb8" id="camera-instruction">
+          Position cattle in frame and capture or upload a photo
+        </div>
+        
         <input type="file" accept="image/*" id="camera-file-input">
-        <div style="display:flex;gap:8px;margin-top:16px">
-          <button class="btn-ghost" style="flex:1" id="camera-use-file">
-            <i class="ri-folder-upload-line"></i> Upload
+        
+        <div class="camera-actions">
+          <button class="btn-ghost" id="camera-use-file">
+            <i class="ri-folder-upload-line"></i> Upload Photo
           </button>
-          <button class="big-btn" style="flex:2;margin:0" id="camera-snap">
-            <i class="ri-camera-line"></i> Capture
+          <button class="big-btn" id="camera-snap">
+            <i class="ri-camera-line"></i> Capture Photo
           </button>
         </div>
-      </div>
-      <div class="mt8 center muted small">Allow camera access or upload a photo</div>
-    </div>
-  </div>
-
-  <div id="modal-audio" class="modal-backdrop hidden" aria-hidden="true">
-    <div class="modal">
-      <div class="section-header" style="margin-bottom:16px">
-        <strong style="font-size:1.05rem">
-          <i class="ri-mic-line"></i> Record Sound (5s)
-        </strong>
-        <button class="btn-ghost" id="modal-audio-close">
-          <i class="ri-close-line"></i> Close
-        </button>
-      </div>
-      <div class="center">
-        <div class="microphone" id="mic-button">
-          <i class="ri-mic-line"></i>
-        </div>
-        <div class="progress"><i id="mic-progress"></i></div>
-        <div class="muted small mt8" id="mic-status">Tap the mic to start recording</div>
-        <div style="margin-top:16px">
-          <button class="btn-ghost" id="mic-cancel">
-            <i class="ri-close-line"></i> Cancel
-          </button>
+        
+        <div class="progress"><i id="scan-progress"></i></div>
+        
+        <div class="muted small mt8" id="scan-status">
+          Ready to scan
         </div>
       </div>
     </div>
@@ -1104,15 +1145,15 @@ const SAMPLE_DATA = {
    Storage helpers
    ============ */
 function loadState(){
-  const raw = localStorage.getItem('lam_mvp_v2');
+  const raw = localStorage.getItem('lam_mvp_v3');
   if (!raw){
-    localStorage.setItem('lam_mvp_v2', JSON.stringify(SAMPLE_DATA));
+    localStorage.setItem('lam_mvp_v3', JSON.stringify(SAMPLE_DATA));
     return JSON.parse(JSON.stringify(SAMPLE_DATA));
   }
-  try { return JSON.parse(raw); } catch(e){ localStorage.setItem('lam_mvp_v2', JSON.stringify(SAMPLE_DATA)); return JSON.parse(JSON.stringify(SAMPLE_DATA)); }
+  try { return JSON.parse(raw); } catch(e){ localStorage.setItem('lam_mvp_v3', JSON.stringify(SAMPLE_DATA)); return JSON.parse(JSON.stringify(SAMPLE_DATA)); }
 }
 function saveState(state){
-  localStorage.setItem('lam_mvp_v2', JSON.stringify(state));
+  localStorage.setItem('lam_mvp_v3', JSON.stringify(state));
 }
 let STATE = loadState();
 
@@ -1292,11 +1333,12 @@ el('#btn-forgot-password').addEventListener('click', function(e) {
    ==================== */
 function renderStats(){
   const animals = STATE.animals.length;
+  const healthy = STATE.animals.filter(a=>a.health_status==='Good').length;
   const sick = STATE.animals.filter(a=>a.health_status!=='Good').length;
-  const critical = STATE.alerts.filter(a=>a.severity==='High').length;
+  
   el('#stat-animals').textContent = animals;
+  el('#stat-healthy').textContent = healthy;
   el('#stat-sick').textContent = sick;
-  el('#stat-critical').textContent = critical;
 }
 
 /* Render animals list on dashboard */
@@ -1322,17 +1364,17 @@ function renderAnimalsList(){
 /* Render alerts preview */
 function renderAlertsPreview(){
   const list = el('#alerts-list'); list.innerHTML='';
-  const recent = STATE.alerts.slice().sort((x,y)=>new Date(y.timestamp)-new Date(x.timestamp)).slice(0,4);
-  if (recent.length===0){ list.innerHTML='<div class="muted small">No alerts</div>'; return; }
+  const recent = STATE.alerts.slice().sort((x,y)=>new Date(y.timestamp)-new Date(x.timestamp)).slice(0,3);
+  if (recent.length===0){ list.innerHTML='<div class="muted small" style="text-align:center;padding:20px">No alerts at the moment</div>'; return; }
   recent.forEach(a=>{
     const animal = STATE.animals.find(x=>x.id===a.animal_id);
     const div=document.createElement('div'); div.className='alert-row';
-    div.innerHTML = `<div class="avatar" style="width:44px;height:44px;font-size:1.2rem"><i class="${animal?animal.icon:'ri-alarm-warning-line'}"></i></div>
+    div.innerHTML = `<div class="avatar" style="width:44px;height:44px;font-size:1.2rem;background:${a.severity==='High'?'var(--danger)':a.severity==='Medium'?'var(--warn)':'var(--good)'}"><i class="${animal?animal.icon:'ri-alarm-warning-line'}"></i></div>
       <div style="flex:1">
-        <div style="font-weight:600;margin-bottom:2px">${animal?animal.name:'Unknown'} — ${a.type}</div>
-        <div class="muted small">${a.severity} • ${relativeTime(a.timestamp)}</div>
+        <div style="font-weight:600;margin-bottom:2px;color:${a.severity==='High'?'var(--danger)':a.severity==='Medium'?'var(--warn)':'var(--good)'}">${animal?animal.name:'Unknown'}</div>
+        <div class="muted small">${a.type} • ${relativeTime(a.timestamp)}</div>
       </div>
-      <div><button class="btn-ghost" data-id="${a.alert_id}">
+      <div><button class="btn-ghost" data-id="${a.alert_id}" style="padding:6px 12px;font-size:0.8rem;">
         <i class="ri-eye-line"></i> View
       </button></div>`;
     div.querySelector('button').addEventListener('click', ()=>openProfile(a.animal_id));
@@ -1345,16 +1387,16 @@ function renderAllAlerts(){
   el('#alerts-all').innerHTML='';
   const all = STATE.alerts.slice().sort((x,y)=>new Date(y.timestamp)-new Date(x.timestamp));
   el('#alerts-count').textContent = all.length;
-  if (all.length===0){ el('#alerts-all').innerHTML='<div class="muted small">No alerts</div>'; return; }
+  if (all.length===0){ el('#alerts-all').innerHTML='<div class="muted small" style="text-align:center;padding:30px">No alerts in the system</div>'; return; }
   all.forEach(a=>{
     const animal = STATE.animals.find(x=>x.id===a.animal_id);
     const div=document.createElement('div'); div.className='alert-row';
-    div.innerHTML = `<div class="avatar" style="width:44px;height:44px;font-size:1.2rem"><i class="${animal?animal.icon:'ri-alarm-warning-line'}"></i></div>
+    div.innerHTML = `<div class="avatar" style="width:44px;height:44px;font-size:1.2rem;background:${a.severity==='High'?'var(--danger)':a.severity==='Medium'?'var(--warn)':'var(--good)'}"><i class="${animal?animal.icon:'ri-alarm-warning-line'}"></i></div>
       <div style="flex:1">
-        <div style="font-weight:600;margin-bottom:2px">${animal?animal.name:'Unknown'} — ${a.type}</div>
-        <div class="muted small">${a.severity} • ${fmtTime(a.timestamp)}</div>
+        <div style="font-weight:600;margin-bottom:2px">${animal?animal.name:'Unknown'}</div>
+        <div class="muted small">${a.type} • ${fmtTime(a.timestamp)}</div>
       </div>
-      <div><button class="btn-ghost" data-id="${a.alert_id}">
+      <div><button class="btn-ghost" data-id="${a.alert_id}" style="padding:6px 12px;font-size:0.8rem;">
         <i class="ri-external-link-line"></i> Open
       </button></div>`;
     div.querySelector('button').addEventListener('click', ()=>openProfile(a.animal_id));
@@ -1377,10 +1419,10 @@ function openProfile(animalId){
   // alerts for the animal
   const pa = el('#profile-alerts'); pa.innerHTML='';
   const alerts = STATE.alerts.filter(x=>x.animal_id===animalId).sort((x,y)=>new Date(y.timestamp)-new Date(x.timestamp));
-  if (alerts.length===0) pa.innerHTML='<div class="muted small">No alerts</div>';
+  if (alerts.length===0) pa.innerHTML='<div class="muted small" style="text-align:center;padding:20px">No alerts for this cattle</div>';
   alerts.forEach(al=>{
     const d=document.createElement('div'); d.className='alert-row';
-    d.innerHTML = `<div class="avatar" style="width:44px;height:44px;font-size:1.2rem"><i class="${animal.icon || 'ri-cow-line'}"></i></div>
+    d.innerHTML = `<div class="avatar" style="width:44px;height:44px;font-size:1.2rem;background:${al.severity==='High'?'var(--danger)':al.severity==='Medium'?'var(--warn)':'var(--good)'}"><i class="${animal.icon || 'ri-cow-line'}"></i></div>
       <div style="flex:1"><div style="font-weight:600;margin-bottom:2px">${al.type}</div><div class="muted small">${fmtTime(al.timestamp)}</div></div>
       <div><span class="${al.severity==='High'?'status-critical':(al.severity==='Medium'?'status-warn':'status-healthy')}">${al.severity}</span></div>`;
     pa.appendChild(d);
@@ -1389,9 +1431,8 @@ function openProfile(animalId){
   // switch views
   showView('profile');
   // attach profile-specific actions
-  el('#profile-record').onclick = ()=>openAudioModal(animal.id);
-  el('#profile-injury').onclick = ()=>openCameraModal('injury', animal.id);
-  el('#profile-history').onclick = ()=>alert('History demo (not implemented) — would show past health records.');
+  el('#profile-scan').onclick = ()=>openCameraModal('scan', animal.id);
+  el('#profile-history').onclick = ()=>alert('Health history would show past weight measurements, feed times, and health events for this cattle.');
 }
 
 /* Navigation: show specific view */
@@ -1425,8 +1466,6 @@ function boot(){
   renderAllAlerts();
   renderSecurity();
   showView('dashboard');
-  // clock
-  setInterval(()=>el('#clock').textContent = new Date().toLocaleTimeString(), 1000);
 }
 
 /* ==========================
@@ -1439,44 +1478,84 @@ function mockVisionAIAnalyze(imageBlob){
   // We'll randomly decide presence of wound or weight issues to demonstrate flow.
   const rnd = Math.random();
   if (rnd < 0.15) {
-    return { wound_detected: true, wound_location: "hind leg", weight_score: "Low", confidence: 0.92 };
+    return { 
+      wound_detected: true, 
+      wound_location: "hind leg", 
+      weight_score: "Low", 
+      confidence: 0.92,
+      breed_detected: "Holstein",
+      estimated_weight: "450 kg"
+    };
   } else if (rnd < 0.35) {
-    return { wound_detected: false, wound_location: null, weight_score: "Low", confidence: 0.78 };
+    return { 
+      wound_detected: false, 
+      wound_location: null, 
+      weight_score: "Low", 
+      confidence: 0.78,
+      breed_detected: "Jersey",
+      estimated_weight: "380 kg"
+    };
+  } else if (rnd < 0.5) {
+    return { 
+      wound_detected: false, 
+      wound_location: null, 
+      weight_score: "High", 
+      confidence: 0.85,
+      breed_detected: "Hereford",
+      estimated_weight: "520 kg"
+    };
   } else {
-    return { wound_detected: false, wound_location: null, weight_score: "Normal", confidence: 0.95 };
+    return { 
+      wound_detected: false, 
+      wound_location: null, 
+      weight_score: "Normal", 
+      confidence: 0.95,
+      breed_detected: "Angus",
+      estimated_weight: "480 kg"
+    };
   }
 }
 
-/* Mock audio AI: analyze short recording and return object */
-function mockAudioAIAnalyze(audioBlob){
-  // This is a mock. Real system would use trained audio classifier.
-  const rnd = Math.random();
-  if (rnd < 0.12) return { audio_result: "Distress sound detected", risk_level: "High" };
-  if (rnd < 0.35) return { audio_result: "Cough detected", risk_level: "Medium" };
-  return { audio_result: "Normal", risk_level: "Low" };
-}
-
 /* ===============================
-   Camera modal & photo processing
+   Enhanced Camera modal with scanning
    =============================== */
 let cameraStream = null;
-let currentCameraMode = null; // 'scan' or 'injury'
 let currentCameraTargetId = null; // animal id when triggered from profile
+let scanInProgress = false;
 
 async function openCameraModal(mode='scan', targetId=null){
-  currentCameraMode = mode;
   currentCameraTargetId = targetId;
   el('#modal-camera').classList.remove('hidden');
   el('#modal-camera').ariaHidden = 'false';
+  el('#camera-preview').style.display = 'none';
+  el('#camera-video').style.display = 'block';
+  el('#scan-status').textContent = 'Position cattle in frame';
+  el('#scan-progress').style.width = '0%';
+  scanInProgress = false;
+  
+  // Reset file input
+  el('#camera-file-input').value = '';
+  
   // start camera if available
   const video = el('#camera-video');
   try{
-    cameraStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}, audio:false});
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'environment',
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }, 
+      audio: false
+    });
     video.srcObject = cameraStream;
     video.play();
+    el('#camera-instruction').textContent = 'Position cattle in frame and capture or upload a photo';
   }catch(e){
     video.srcObject = null;
     console.warn('Camera not available, use file upload fallback', e);
+    el('#camera-instruction').textContent = 'Camera not available. Please upload a photo instead.';
+    el('#camera-snap').disabled = true;
+    el('#camera-snap').innerHTML = '<i class="ri-camera-off-line"></i> Camera Unavailable';
   }
 }
 
@@ -1489,179 +1568,174 @@ function closeCameraModal(){
     cameraStream.getTracks().forEach(t=>t.stop());
     cameraStream = null;
   }
+  scanInProgress = false;
 }
 
 /* Snapshot from video */
 async function captureFromVideo(){
+  if (scanInProgress) return null;
+  
   const video = el('#camera-video');
   if (!video || video.readyState < 2) {
-    // fallback: user should upload file
     alert('Camera not ready. You can upload a photo instead.');
     return null;
   }
-  const canvas = document.createElement('canvas'); canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d'); ctx.drawImage(video,0,0,canvas.width,canvas.height);
-  return await new Promise(res=>canvas.toBlob(res,'image/jpeg',0.85));
+  
+  // Show preview
+  const canvas = document.createElement('canvas'); 
+  canvas.width = video.videoWidth; 
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d'); 
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+  // Show the captured image
+  el('#camera-preview').src = canvas.toDataURL('image/jpeg');
+  el('#camera-preview').style.display = 'block';
+  el('#camera-video').style.display = 'none';
+  
+  return await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
 }
 
 /* File upload fallback */
 el('#camera-use-file').onclick = ()=>el('#camera-file-input').click();
+
 el('#camera-file-input').onchange = async (ev)=>{
-  const f = ev.target.files[0]; if (!f) return;
-  await processCapturedPhoto(f);
-  el('#camera-file-input').value = '';
-}
+  const file = ev.target.files[0]; 
+  if (!file) return;
+  
+  // Validate file type
+  if (!file.type.match('image.*')) {
+    alert('Please select an image file (JPEG, PNG, etc.)');
+    return;
+  }
+  
+  // Show preview
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    el('#camera-preview').src = e.target.result;
+    el('#camera-preview').style.display = 'block';
+    el('#camera-video').style.display = 'none';
+    el('#scan-status').textContent = 'Photo ready for analysis';
+  };
+  reader.readAsDataURL(file);
+  
+  // Process the file
+  await processCapturedPhoto(file);
+};
 
 /* When user presses capture */
 el('#camera-snap').onclick = async ()=>{
+  if (scanInProgress) return;
+  
+  el('#scan-status').textContent = 'Capturing photo...';
   const blob = await captureFromVideo();
-  if (blob) await processCapturedPhoto(blob);
-}
-
-/* Process photo result */
-async function processCapturedPhoto(blob){
-  // Run mock vision AI
-  const result = mockVisionAIAnalyze(blob);
-  // If called from profile -> update animal
-  if (currentCameraTargetId){
-    // add alert if wound detected or weight low
-    const animal = STATE.animals.find(a=>a.id===currentCameraTargetId);
-    if (!animal) { alert('Animal missing'); closeCameraModal(); return; }
-    // create alert if problem
-    if (result.wound_detected || result.weight_score!=='Normal'){
-      const alertId = 'a'+Math.floor(Math.random()*1000000);
-      const severity = result.wound_detected ? 'High' : (result.weight_score==='Low' ? 'Medium' : 'Low');
-      const newAlert = { alert_id: alertId, animal_id: animal.id, type: result.wound_detected ? 'Wound detected' : 'Low weight', severity, timestamp: (new Date()).toISOString() };
-      STATE.alerts.push(newAlert);
-      animal.alerts = animal.alerts || []; animal.alerts.push(newAlert);
-      animal.health_status = severity==='High' ? 'Critical' : 'Warning';
-    } else {
-      // minor update if normal
-      animal.health_status = 'Good';
-    }
-    saveState(STATE);
-    renderAllAlerts(); renderAlertsPreview(); renderAnimalsList(); renderStats();
-    alert(`Vision AI result: wound=${result.wound_detected} weight=${result.weight_score} (confidence ${result.confidence})`);
-  } else {
-    // If scanning (from dashboard), we simulate tag/face recognition:
-    // pick a random animal that best matches (or first)
-    const matched = STATE.animals[Math.floor(Math.random()*STATE.animals.length)];
-    alert(`Scanned — matched: ${matched.name} (${matched.tag})\nVision AI: weight=${result.weight_score}`);
-    openProfile(matched.id);
+  if (blob) {
+    await processCapturedPhoto(blob);
   }
-  closeCameraModal();
+};
+
+/* Process photo result with scanning animation */
+async function processCapturedPhoto(blob){
+  if (scanInProgress) return;
+  scanInProgress = true;
+  
+  el('#scan-status').textContent = 'Analyzing image...';
+  
+  // Simulate scanning progress
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += 10;
+    el('#scan-progress').style.width = progress + '%';
+    if (progress >= 100) {
+      clearInterval(progressInterval);
+    }
+  }, 100);
+  
+  // Run mock vision AI after a short delay
+  setTimeout(async () => {
+    // Run mock vision AI
+    const result = mockVisionAIAnalyze(blob);
+    
+    clearInterval(progressInterval);
+    el('#scan-progress').style.width = '100%';
+    
+    // If called from profile -> update animal
+    if (currentCameraTargetId){
+      const animal = STATE.animals.find(a=>a.id===currentCameraTargetId);
+      if (!animal) { 
+        alert('Animal missing'); 
+        closeCameraModal(); 
+        scanInProgress = false;
+        return; 
+      }
+      
+      // Update animal data
+      animal.weight_score = result.weight_score;
+      animal.health_status = result.wound_detected ? 'Critical' : 
+                             (result.weight_score !== 'Normal' ? 'Warning' : 'Good');
+      
+      // create alert if problem
+      if (result.wound_detected || result.weight_score!=='Normal'){
+        const alertId = 'a'+Math.floor(Math.random()*1000000);
+        const severity = result.wound_detected ? 'High' : (result.weight_score==='Low' ? 'Medium' : 'Low');
+        const newAlert = { 
+          alert_id: alertId, 
+          animal_id: animal.id, 
+          type: result.wound_detected ? 'Wound detected' : `${result.weight_score} weight`, 
+          severity, 
+          timestamp: (new Date()).toISOString(),
+          message: result.wound_detected ? 
+            `Wound detected on ${result.wound_location}` : 
+            `Weight: ${result.estimated_weight} (${result.weight_score})`
+        };
+        STATE.alerts.push(newAlert);
+        animal.alerts = animal.alerts || []; 
+        animal.alerts.push(newAlert);
+      }
+      
+      saveState(STATE);
+      renderAllAlerts(); 
+      renderAlertsPreview(); 
+      renderAnimalsList(); 
+      renderStats();
+      
+      el('#scan-status').textContent = 'Analysis complete!';
+      setTimeout(() => {
+        alert(`Scan Results for ${animal.name}:\n\n` +
+              `• Breed detected: ${result.breed_detected}\n` +
+              `• Estimated weight: ${result.estimated_weight}\n` +
+              `• Weight status: ${result.weight_score}\n` +
+              `• Wound detected: ${result.wound_detected ? 'Yes (' + result.wound_location + ')' : 'No'}\n` +
+              `• Confidence: ${(result.confidence * 100).toFixed(1)}%`);
+        closeCameraModal();
+      }, 500);
+      
+    } else {
+      // If scanning from dashboard, simulate tag/face recognition:
+      const matched = STATE.animals[Math.floor(Math.random()*STATE.animals.length)];
+      
+      el('#scan-status').textContent = 'Cattle identified!';
+      setTimeout(() => {
+        alert(`Scan Results:\n\n` +
+              `• Cattle identified: ${matched.name} (${matched.tag})\n` +
+              `• Breed: ${result.breed_detected}\n` +
+              `• Estimated weight: ${result.estimated_weight}\n` +
+              `• Weight status: ${result.weight_score}\n` +
+              `• Health check: ${result.wound_detected ? 'Wound detected' : 'No issues found'}\n\n` +
+              `Taking you to ${matched.name}'s profile...`);
+        
+        closeCameraModal();
+        openProfile(matched.id);
+      }, 500);
+    }
+    
+    scanInProgress = false;
+  }, 2000);
 }
 
 /* Open camera modal utility */
-el('#btn-scan').onclick = ()=>openCameraModal('scan', null);
-el('#btn-injury').onclick = ()=>openCameraModal('injury', null);
+el('#btn-scan-top').onclick = ()=>openCameraModal('scan', null);
 el('#modal-camera-close').onclick = ()=>closeCameraModal();
-
-/* ==========================
-   Audio modal & recording
-   ========================== */
-let audioRecorder = null;
-let audioChunks = [];
-let micTimer = null;
-let micCountdown = 5;
-
-function openAudioModal(targetAnimalId=null){
-  currentAudioTarget = targetAnimalId || null;
-  el('#modal-audio').classList.remove('hidden'); el('#modal-audio').ariaHidden='false';
-  el('#mic-status').textContent = 'Tap the mic to start recording';
-  el('#mic-progress').style.width = '0%';
-  // attach handler
-  el('#mic-button').onclick = startRecording;
-  el('#mic-cancel').onclick = ()=>{
-    stopRecording(true);
-    closeAudioModal();
-  };
-}
-
-function closeAudioModal(){
-  el('#modal-audio').classList.add('hidden'); el('#modal-audio').ariaHidden='true';
-  if (audioRecorder) stopRecording(true);
-}
-
-el('#modal-audio-close').onclick = closeAudioModal;
-
-let currentAudioTarget = null;
-
-/* Start recording (5 sec) using MediaRecorder */
-async function startRecording(){
-  // request mic
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video:false });
-    audioChunks = [];
-    audioRecorder = new MediaRecorder(stream);
-    audioRecorder.ondataavailable = e=>audioChunks.push(e.data);
-    audioRecorder.onstop = async ()=>{
-      const blob = new Blob(audioChunks,{type:'audio/webm'});
-      await handleRecordedAudio(blob);
-      // stop tracks
-      stream.getTracks().forEach(t=>t.stop());
-      audioRecorder=null;
-    };
-    audioRecorder.start();
-    el('#mic-status').textContent = 'Recording...';
-    // animate progress for 5s
-    const dur = 5; let t=0;
-    el('#mic-progress').style.width = '0%';
-    micTimer = setInterval(()=>{ t+=0.1; const pct = Math.min(100, (t/dur)*100); el('#mic-progress').style.width = pct+'%'; if (t>=dur){ clearInterval(micTimer); audioRecorder.stop(); } }, 100);
-  }catch(e){
-    alert('Microphone access denied or not available.');
-    console.error(e);
-  }
-}
-
-/* Stop recording utility */
-function stopRecording(force=false){
-  if (audioRecorder && audioRecorder.state !== 'inactive') {
-    audioRecorder.stop();
-  }
-  if (micTimer) clearInterval(micTimer);
-  el('#mic-progress').style.width = '0%';
-}
-
-/* After recording -> call mock audio AI */
-async function handleRecordedAudio(blob){
-  // Run mock audio AI
-  const result = mockAudioAIAnalyze(blob);
-  // Attach alert if problem and target exists
-  if (currentAudioTarget){
-    const animal = STATE.animals.find(a=>a.id===currentAudioTarget);
-    if (!animal) { alert('Target animal missing'); return; }
-    if (result.risk_level === 'High' || result.risk_level === 'Medium'){
-      const aId = 'a'+Math.floor(Math.random()*1000000);
-      const newAlert = { alert_id: aId, animal_id: animal.id, type: result.audio_result, severity: result.risk_level==='High' ? 'High':'Medium', timestamp: (new Date()).toISOString() };
-      STATE.alerts.push(newAlert);
-      animal.alerts = animal.alerts || []; animal.alerts.push(newAlert);
-      animal.health_status = result.risk_level==='High' ? 'Critical' : 'Warning';
-      saveState(STATE); renderAllAlerts(); renderAlertsPreview(); renderAnimalsList(); renderStats();
-      alert(`Audio AI: ${result.audio_result} (risk ${result.risk_level}) — alert created for ${animal.name}`);
-    } else {
-      alert('Audio AI: Normal');
-    }
-  } else {
-    // dashboard-record -> demo: pick random animal
-    const matched = STATE.animals[Math.floor(Math.random()*STATE.animals.length)];
-    if (result.risk_level!=='Low'){
-      const aId = 'a'+Math.floor(Math.random()*1000000);
-      const newAlert = { alert_id: aId, animal_id: matched.id, type: result.audio_result, severity: result.risk_level==='High' ? 'High':'Medium', timestamp: (new Date()).toISOString() };
-      STATE.alerts.push(newAlert);
-      matched.alerts = matched.alerts || []; matched.alerts.push(newAlert);
-      matched.health_status = result.risk_level==='High' ? 'Critical' : 'Warning';
-      saveState(STATE); renderAllAlerts(); renderAlertsPreview(); renderAnimalsList(); renderStats();
-      alert(`Audio AI: ${result.audio_result} — created alert for ${matched.name}`);
-    } else {
-      alert(`Audio AI: ${result.audio_result} — no issues`);
-    }
-  }
-  closeAudioModal();
-}
-
-/* Dashboard record button */
-el('#btn-record').onclick = ()=>openAudioModal(null);
 
 /* =====================
    Small UI bindings
@@ -1678,6 +1752,15 @@ els('.nav-btn').forEach(btn => {
     showView(view);
     if (view === 'security') renderSecurity();
   });
+});
+
+// Profile button in header
+el('#btn-profile').addEventListener('click', function() {
+  if (currentUser) {
+    alert(`Profile Information:\n\nName: ${currentUser.name}\nEmail: ${currentUser.email}\n\nAccount management features would be implemented in a production version.`);
+  } else {
+    alert('User profile information not available.');
+  }
 });
 
 el('#nav-animals').onclick = ()=>{ 
