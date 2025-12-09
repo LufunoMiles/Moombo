@@ -666,6 +666,62 @@
     margin: 20px 0;
   }
   
+  /* Profile screen specific styles */
+  .profile-section {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .profile-section:last-child {
+    border-bottom: none;
+  }
+  
+  .profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+  }
+  
+  .profile-label {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  
+  .profile-value {
+    font-weight: 600;
+  }
+  
+  .profile-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 2.5rem;
+    color: white;
+  }
+  
+  .danger-zone {
+    background: rgba(220, 53, 69, 0.05);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .info-note {
+    background: rgba(91, 146, 121, 0.1);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 16px 0;
+    border-left: 4px solid var(--accent);
+    font-size: 0.9rem;
+  }
+  
   /* Desktop tweaks */
   @media(min-width: 800px) {
     .app {
@@ -879,6 +935,169 @@
   .toast.warning {
     background: var(--warn);
   }
+  
+  /* Camera mode selector */
+  .camera-mode-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .mode-btn {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg-lighter);
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .mode-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  
+  .mode-btn:hover:not(.active) {
+    background: white;
+    border-color: var(--accent);
+  }
+  
+  /* Multi-image upload styles */
+  .image-upload-container {
+    margin: 16px 0;
+  }
+  
+  .uploaded-images-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 16px 0;
+  }
+  
+  .uploaded-image-item {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid var(--border);
+  }
+  
+  .uploaded-image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .remove-image-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--danger);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  
+  .image-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+  
+  .upload-instructions {
+    background: rgba(91, 146, 121, 0.1);
+    border-radius: 10px;
+    padding: 12px;
+    margin: 12px 0;
+    font-size: 0.85rem;
+    border-left: 3px solid var(--accent);
+  }
+  
+  .upload-instructions ul {
+    margin: 8px 0 8px 16px;
+  }
+  
+  .upload-instructions li {
+    margin-bottom: 4px;
+  }
+  
+  .capture-count {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  
+  /* File upload area */
+  .file-upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 16px 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .file-upload-area:hover {
+    border-color: var(--accent);
+    background: rgba(91, 146, 121, 0.05);
+  }
+  
+  .file-upload-area i {
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  
+  /* Video recorder */
+  .video-recorder {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .recording-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--danger);
+    font-weight: 600;
+    justify-content: center;
+  }
+  
+  .recording-dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--danger);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+  }
 </style>
 </head>
 <body>
@@ -1067,10 +1286,7 @@
         </div>
         <div class="header-actions">
           <button class="header-btn" id="btn-profile" title="Profile">
-            <i class="ri-user-line"></i>
-          </button>
-          <button class="header-btn logout" id="btn-logout" title="Logout">
-            <i class="ri-logout-box-r-line"></i>
+          <i class="ri-notification-4-line"></i>
           </button>
         </div>
       </div>
@@ -1132,7 +1348,7 @@
       </div>
 
       <!-- ANIMAL PROFILE VIEW -->
-      <div id="view-profile" class="view">
+      <div id="view-animal-profile" class="view">
         <section class="card">
           <div class="profile-header">
             <div>
@@ -1167,7 +1383,7 @@
 
           <div class="mt8">
             <button class="big-btn" id="profile-scan">
-              <i class="ri-camera-line"></i> Scan
+              <i class="ri-camera-line"></i> Scan This Cattle
             </button>
             <button class="big-btn" id="profile-history">
               <i class="ri-history-line"></i> View Health History
@@ -1207,36 +1423,99 @@
         </div>
       </div>
 
-      <!-- SECURITY CENTER VIEW -->
-      <div id="view-security" class="view">
+      <!-- USER PROFILE VIEW -->
+      <div id="view-user-profile" class="view">
         <section class="card">
-          <div class="section-header">
-            <div class="section-title">
-              <i class="ri-shield-keyhole-line"></i> Security Center
+          <div class="center">
+            <div class="profile-avatar-large">
+              <i class="ri-user-line"></i>
             </div>
-            <div class="muted small">System integrity checks</div>
+            <h2 id="user-profile-name" style="margin-bottom: 4px;">John Farmer</h2>
+            <div class="muted small" id="user-profile-email">farmer@example.com</div>
           </div>
-          <div style="padding:12px 0;border-bottom:1px solid var(--border)">
-            <div style="font-weight:600;margin-bottom:4px">
-              <i class="ri-qr-code-line"></i> Tag validation
+          
+          <div class="profile-section">
+            <div class="section-title" style="margin-bottom: 16px;">
+              <i class="ri-information-line"></i> Account Information
             </div>
-            <div id="sec-tag" class="muted small">—</div>
+            
+            <div class="profile-item">
+              <div class="profile-label">Account Type</div>
+              <div class="profile-value">Premium Farmer</div>
+            </div>
+            
+            <div class="profile-item">
+              <div class="profile-label">Member Since</div>
+              <div class="profile-value" id="user-member-since">2024</div>
+            </div>
+            
+            <div class="profile-item">
+              <div class="profile-label">Total Cattle</div>
+              <div class="profile-value" id="user-total-cattle">--</div>
+            </div>
+            
+            <div class="profile-item">
+              <div class="profile-label">Active Alerts</div>
+              <div class="profile-value" id="user-active-alerts">--</div>
+            </div>
           </div>
-          <div style="padding:12px 0;border-bottom:1px solid var(--border)">
-            <div style="font-weight:600;margin-bottom:4px">
-              <i class="ri-radar-line"></i> Sensor integrity
+          
+          <div class="profile-section">
+            <div class="section-title" style="margin-bottom: 16px;">
+              <i class="ri-settings-3-line"></i> Settings
             </div>
-            <div id="sec-integrity" class="muted small">—</div>
+            
+            <div class="profile-item" style="cursor: pointer;" id="btn-notifications">
+              <div>
+                <div style="font-weight: 500;">Notifications</div>
+                <div class="muted small">Manage alert preferences</div>
+              </div>
+              <i class="ri-arrow-right-s-line"></i>
+            </div>
+            
+            <div class="profile-item" style="cursor: pointer;" id="btn-cattle-management">
+              <div>
+                <div style="font-weight: 500;">Cattle Management</div>
+                <div class="muted small">Add/remove cattle, edit details</div>
+              </div>
+              <i class="ri-arrow-right-s-line"></i>
+            </div>
+            
+            <div class="profile-item" style="cursor: pointer;" id="btn-privacy">
+              <div>
+                <div style="font-weight: 500;">Privacy & Data</div>
+                <div class="muted small">Data usage and privacy settings</div>
+              </div>
+              <i class="ri-arrow-right-s-line"></i>
+            </div>
           </div>
-          <div style="padding:12px 0">
-            <div style="font-weight:600;margin-bottom:4px">
-              <i class="ri-music-2-line"></i> Audio replay detection
+          
+          <div class="danger-zone">
+            <div class="section-title" style="color: var(--danger); margin-bottom: 16px;">
+              <i class="ri-alert-line"></i> Account Actions
             </div>
-            <div id="sec-replay" class="muted small">—</div>
+            
+            <div class="info-note">
+              <strong><i class="ri-camera-video-line"></i> Video Capture Note:</strong><br>
+              You can capture videos or upload existing videos of your cattle for more detailed health analysis. Videos can help detect movement patterns and behavioral issues.
+            </div>
+            
+            <button class="big-btn" id="btn-change-password" style="background: var(--bg-lighter); color: var(--text-primary);">
+              <i class="ri-key-line"></i> Change Password
+            </button>
+            
+            <button class="big-btn logout" id="btn-logout-profile" style="background: var(--danger); margin-top: 12px;">
+              <i class="ri-logout-box-r-line"></i> Log Out
+            </button>
+            
+            <div class="muted small" style="text-align: center; margin-top: 16px;">
+              Version 1.0.0 • Moombo Livestock AI
+            </div>
           </div>
         </section>
+        
         <div style="margin-top:12px">
-          <button class="btn-ghost" id="sec-back">
+          <button class="btn-ghost" id="user-profile-back">
             <i class="ri-arrow-left-line"></i> Back to Dashboard
           </button>
         </div>
@@ -1247,15 +1526,15 @@
     <footer class="app-footer">
       <button class="nav-btn active" data-view="dashboard" id="nav-dashboard">
         <i class="ri-home-4-line nav-icon"></i>
-      </button>
-      <button class="nav-btn" data-view="animals" id="nav-animals">
-        <img src="/cow.png" width="20" alt="">
+        <span class="nav-label">Home</span>
       </button>
       <button class="nav-btn" data-view="alerts" id="nav-alerts">
         <i class="ri-alarm-warning-line nav-icon"></i>
+        <span class="nav-label">Alerts</span>
       </button>
-      <button class="nav-btn" data-view="security" id="nav-security">
-        <i class="ri-shield-keyhole-line nav-icon"></i>
+      <button class="nav-btn" data-view="user-profile" id="nav-user-profile">
+        <i class="ri-user-line nav-icon"></i>
+        <span class="nav-label">Profile</span>
       </button>
     </footer>
   </div>
@@ -1272,23 +1551,85 @@
         </button>
       </div>
       
+      <div class="camera-mode-selector">
+        <button class="mode-btn active" id="mode-photo">
+          <i class="ri-camera-line"></i> Photo
+          <span class="image-count-badge" id="photo-count">0</span>
+        </button>
+        <button class="mode-btn" id="mode-video">
+          <i class="ri-video-line"></i> Video
+        </button>
+      </div>
+      
       <div class="center">
-        <video id="camera-video" autoplay playsinline></video>
-        <img id="camera-preview" alt="Preview">
-        
-        <div class="muted small mb8" id="camera-instruction">
-          Position cattle in frame and capture or upload a photo
+        <!-- Photo Mode Content -->
+        <div id="photo-mode-content">
+          <div class="upload-instructions">
+            <strong>For best analysis:</strong>
+            <ul>
+              <li>Upload <span class="capture-count">3 or more</span> photos of the same cattle</li>
+              <li>Include different angles (side, front, back)</li>
+              <li>Ensure good lighting</li>
+              <li>Capture any visible wounds or issues</li>
+            </ul>
+          </div>
+          
+          <div class="uploaded-images-grid" id="uploaded-images-grid">
+            <!-- Images will be added here -->
+          </div>
+          
+          <div class="file-upload-area" id="file-upload-area">
+            <i class="ri-folder-upload-line"></i>
+            <div style="font-weight: 600; margin-bottom: 8px;">Upload Photos</div>
+            <div class="muted small">Click to select or drag & drop images</div>
+            <div class="muted text-xs" style="margin-top: 8px;">
+              <i class="ri-information-line"></i> Minimum 3 photos required
+            </div>
+          </div>
+          
+          <input type="file" accept="image/*" id="camera-file-input" multiple>
+          
+          <div class="muted small mb8" id="photo-instruction">
+            <span id="photos-count-text">0 photos uploaded</span> • Need at least 3 photos
+          </div>
+          
+          <div class="camera-actions">
+            <button class="big-btn" id="btn-analyze-photos" disabled style="opacity: 0.6;">
+              <i class="ri-search-eye-line"></i> Analyze Photos
+            </button>
+          </div>
         </div>
         
-        <input type="file" accept="image/*" id="camera-file-input">
-        
-        <div class="camera-actions">
-          <button class="btn-ghost" id="camera-use-file">
-            <i class="ri-folder-upload-line"></i> Upload
-          </button>
-          <button class="big-btn" id="camera-snap">
-            <i class="ri-camera-line"></i> Capture Photo
-          </button>
+        <!-- Video Mode Content -->
+        <div id="video-mode-content" class="hidden">
+          <video id="camera-video" autoplay playsinline></video>
+          <img id="camera-preview" alt="Preview">
+          
+          <div class="muted small mb8" id="camera-instruction">
+            Record a video or upload existing video of cattle
+          </div>
+          
+          <div id="video-recorder-controls">
+            <div class="recording-indicator hidden" id="recording-indicator">
+              <div class="recording-dot"></div>
+              <span>Recording...</span>
+            </div>
+            
+            <div class="video-recorder">
+              <video id="video-playback" controls style="display: none; width: 100%; border-radius: 12px; margin-bottom: 16px;"></video>
+              
+              <div class="camera-actions">
+                <button class="btn-ghost" id="video-use-file">
+                  <i class="ri-folder-upload-line"></i> Upload Video
+                </button>
+                <button class="big-btn" id="video-record-btn">
+                  <i class="ri-record-circle-line"></i> Start Recording
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <input type="file" accept="video/*" id="video-file-input" class="hidden">
         </div>
         
         <div class="progress"><i id="scan-progress"></i></div>
@@ -1464,6 +1805,20 @@ let lastScanResult = null;
 let lastScannedAnimal = null;
 
 /* ====================
+   Multi-photo upload variables
+   ==================== */
+let uploadedPhotos = [];
+let currentCameraMode = 'photo'; // 'photo' or 'video'
+
+/* ====================
+   Video recording variables
+   ==================== */
+let mediaRecorder = null;
+let recordedChunks = [];
+let isRecording = false;
+let cameraStream = null;
+
+/* ====================
    Utilities & helpers
    ==================== */
 function el(q, ctx=document) { return ctx.querySelector(q); }
@@ -1508,7 +1863,8 @@ function handleUserSignedIn(user) {
     email: user.email,
     displayName: user.displayName || user.email.split('@')[0],
     photoURL: user.photoURL,
-    loginTime: new Date().toISOString()
+    loginTime: new Date().toISOString(),
+    creationTime: user.metadata.creationTime || new Date().toISOString()
   };
   
   // Load user-specific data
@@ -1713,10 +2069,10 @@ el('#btn-send-reset').addEventListener('click', async function() {
 });
 
 // Logout
-el('#btn-logout').addEventListener('click', async function() {
+function handleLogout() {
   if (confirm('Are you sure you want to logout?')) {
     try {
-      await auth.signOut();
+      auth.signOut();
       currentUser = null;
       STATE = null;
       showToast('Signed out successfully', 'success');
@@ -1726,7 +2082,7 @@ el('#btn-logout').addEventListener('click', async function() {
       showToast('Logout failed: ' + error.message, 'error');
     }
   }
-});
+}
 
 // Navigation between auth screens
 el('#btn-go-to-signup').addEventListener('click', function(e) {
@@ -1824,7 +2180,26 @@ function renderAllAlerts(){
   });
 }
 
-/* Profile render */
+/* Render user profile */
+function renderUserProfile() {
+  if (!STATE || !currentUser) return;
+  
+  el('#user-profile-name').textContent = currentUser.displayName;
+  el('#user-profile-email').textContent = currentUser.email;
+  
+  // Calculate member since
+  const memberSince = new Date(currentUser.creationTime);
+  el('#user-member-since').textContent = memberSince.getFullYear();
+  
+  // Update stats
+  const animals = STATE.animals.length;
+  const activeAlerts = STATE.alerts.length;
+  
+  el('#user-total-cattle').textContent = animals;
+  el('#user-active-alerts').textContent = activeAlerts;
+}
+
+/* Animal Profile render */
 function openProfile(animalId){
   if (!STATE) return;
   const animal = STATE.animals.find(a=>a.id===animalId);
@@ -1850,7 +2225,7 @@ function openProfile(animalId){
   });
 
   // switch views
-  showView('profile');
+  showView('animal-profile');
   // attach profile-specific actions
   el('#profile-scan').onclick = ()=>openCameraModal('scan', animal.id);
   el('#profile-history').onclick = ()=>alert('Health history would show past weight measurements, feed times, and health events for this cattle.');
@@ -1866,17 +2241,11 @@ function showView(view){
   // update footer nav
   els('.nav-btn').forEach(b=>b.classList.remove('active'));
   el(`#nav-${view}`).classList.add('active');
-}
-
-/* Render security center (mock checks) */
-function renderSecurity(){
-  // simple simulated checks
-  const tag = { tag_valid: true, tag_type: "NFC", integrity: "OK" };
-  const integrity = { data_tampering_detected: false };
-  const replay = { audio_fingerprint: "unique-123", replay_attack: false };
-  el('#sec-tag').textContent = `Tag valid: ${tag.tag_valid} • type: ${tag.tag_type}`;
-  el('#sec-integrity').textContent = `Tampering: ${integrity.data_tampering_detected ? 'DETECTED' : 'OK'}`;
-  el('#sec-replay').textContent = `Replay attack: ${replay.replay_attack ? 'YES' : 'NO'}`;
+  
+  // If showing user profile, render it
+  if (view === 'user-profile') {
+    renderUserProfile();
+  }
 }
 
 /* Boot & render everything */
@@ -1890,19 +2259,108 @@ function boot(){
   renderAnimalsList();
   renderAlertsPreview();
   renderAllAlerts();
-  renderSecurity();
+  renderUserProfile();
   showView('dashboard');
 }
 
 /* ==========================
-   Simple Mock AI processors
+   Multi-photo upload functionality
    ========================== */
+function updatePhotoUploadUI() {
+  const count = uploadedPhotos.length;
+  const photoCountBadge = el('#photo-count');
+  const photosCountText = el('#photos-count-text');
+  const analyzeBtn = el('#btn-analyze-photos');
+  const uploadedImagesGrid = el('#uploaded-images-grid');
+  
+  // Update count badge
+  photoCountBadge.textContent = count;
+  
+  // Update text
+  photosCountText.textContent = `${count} photo${count !== 1 ? 's' : ''} uploaded`;
+  
+  // Enable/disable analyze button
+  if (count >= 3) {
+    analyzeBtn.disabled = false;
+    analyzeBtn.style.opacity = '1';
+    photosCountText.innerHTML = `<span style="color: var(--good);">${count} photos uploaded ✓</span>`;
+  } else {
+    analyzeBtn.disabled = true;
+    analyzeBtn.style.opacity = '0.6';
+    photosCountText.innerHTML = `${count} photos uploaded • Need ${3 - count} more`;
+  }
+  
+  // Update image grid
+  uploadedImagesGrid.innerHTML = '';
+  
+  uploadedPhotos.forEach((photo, index) => {
+    const imgItem = document.createElement('div');
+    imgItem.className = 'uploaded-image-item';
+    
+    const img = document.createElement('img');
+    img.src = photo.preview;
+    img.alt = `Uploaded photo ${index + 1}`;
+    
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-image-btn';
+    removeBtn.innerHTML = '<i class="ri-close-line"></i>';
+    removeBtn.title = 'Remove this photo';
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      removePhoto(index);
+    });
+    
+    imgItem.appendChild(img);
+    imgItem.appendChild(removeBtn);
+    uploadedImagesGrid.appendChild(imgItem);
+  });
+  
+  // Show/hide grid
+  if (count > 0) {
+    uploadedImagesGrid.classList.remove('hidden');
+  } else {
+    uploadedImagesGrid.classList.add('hidden');
+  }
+}
 
-/* Mock vision AI: analyze photo and return object */
-function mockVisionAIAnalyze(imageBlob){
-  // This is a mock. In real app you'd send image to an ML model or run on-device inference.
-  // We'll randomly decide presence of wound or weight issues to demonstrate flow.
-  const rnd = Math.random();
+function addPhoto(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      uploadedPhotos.push({
+        file: file,
+        preview: e.target.result,
+        name: file.name,
+        size: file.size,
+        type: file.type
+      });
+      
+      updatePhotoUploadUI();
+      resolve();
+    };
+    
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function removePhoto(index) {
+  uploadedPhotos.splice(index, 1);
+  updatePhotoUploadUI();
+}
+
+function clearPhotos() {
+  uploadedPhotos = [];
+  updatePhotoUploadUI();
+}
+
+/* ==========================
+   Mock AI analysis for multiple photos
+   ========================== */
+function mockMultiPhotoAIAnalyze(photos) {
+  // Analyze multiple photos for better accuracy
+  const photoCount = photos.length;
   
   // Random breed selection
   const breeds = ["Holstein", "Jersey", "Angus", "Hereford", "Brahman", "Simmental"];
@@ -1911,84 +2369,178 @@ function mockVisionAIAnalyze(imageBlob){
   // Random weight between 350-550 kg
   const randomWeight = Math.floor(Math.random() * 200) + 350;
   
-  if (rnd < 0.15) {
-    return { 
-      wound_detected: true, 
-      wound_location: "hind leg", 
-      weight_score: "Low", 
-      confidence: (Math.random() * 0.2 + 0.8).toFixed(2),
-      breed_detected: randomBreed,
-      estimated_weight: `${randomWeight} kg`,
-      overall_health: "Critical",
-      temperature_estimated: "39.2°C",
-      hydration_level: "Low",
-      movement_score: "Restricted"
-    };
-  } else if (rnd < 0.35) {
-    return { 
-      wound_detected: false, 
-      wound_location: null, 
-      weight_score: "Low", 
-      confidence: (Math.random() * 0.2 + 0.7).toFixed(2),
-      breed_detected: randomBreed,
-      estimated_weight: `${randomWeight} kg`,
-      overall_health: "Warning",
-      temperature_estimated: "38.8°C",
-      hydration_level: "Adequate",
-      movement_score: "Normal"
-    };
-  } else if (rnd < 0.5) {
-    return { 
-      wound_detected: false, 
-      wound_location: null, 
-      weight_score: "High", 
-      confidence: (Math.random() * 0.2 + 0.8).toFixed(2),
-      breed_detected: randomBreed,
-      estimated_weight: `${randomWeight} kg`,
-      overall_health: "Warning",
-      temperature_estimated: "38.5°C",
-      hydration_level: "Good",
-      movement_score: "Active"
-    };
-  } else {
-    return { 
-      wound_detected: false, 
-      wound_location: null, 
-      weight_score: "Normal", 
-      confidence: (Math.random() * 0.2 + 0.85).toFixed(2),
-      breed_detected: randomBreed,
-      estimated_weight: `${randomWeight} kg`,
-      overall_health: "Good",
-      temperature_estimated: "38.5°C",
-      hydration_level: "Good",
-      movement_score: "Active"
-    };
+  // With multiple photos, accuracy improves
+  const baseConfidence = 0.7 + (photoCount * 0.05); // Each photo adds 5% confidence
+  const confidence = Math.min(baseConfidence, 0.95).toFixed(2);
+  
+  // Analyze each "photo" (simulated)
+  let woundDetected = false;
+  let woundLocations = [];
+  let weightScores = [];
+  
+  // Simulate analyzing multiple angles
+  for (let i = 0; i < photoCount; i++) {
+    const rnd = Math.random();
+    
+    if (rnd < 0.1) { // 10% chance per photo to detect wound
+      woundDetected = true;
+      const locations = ["hind leg", "front leg", "back", "side", "neck"];
+      woundLocations.push(locations[Math.floor(Math.random() * locations.length)]);
+    }
+    
+    // Determine weight score from this angle
+    if (rnd < 0.2) {
+      weightScores.push("Low");
+    } else if (rnd < 0.4) {
+      weightScores.push("High");
+    } else {
+      weightScores.push("Normal");
+    }
   }
+  
+  // Determine overall weight score (majority vote)
+  const weightCounts = { "Low": 0, "Normal": 0, "High": 0 };
+  weightScores.forEach(score => weightCounts[score]++);
+  
+  let overallWeightScore = "Normal";
+  if (weightCounts["Low"] > weightCounts["Normal"] && weightCounts["Low"] > weightCounts["High"]) {
+    overallWeightScore = "Low";
+  } else if (weightCounts["High"] > weightCounts["Normal"] && weightCounts["High"] > weightCounts["Low"]) {
+    overallWeightScore = "High";
+  }
+  
+  // Determine overall health
+  let overallHealth = "Good";
+  if (woundDetected) {
+    overallHealth = "Critical";
+  } else if (overallWeightScore !== "Normal") {
+    overallHealth = "Warning";
+  }
+  
+  // Unique wound location if detected
+  const uniqueWoundLocation = woundLocations.length > 0 ? [...new Set(woundLocations)].join(", ") : null;
+  
+  return {
+    wound_detected: woundDetected,
+    wound_location: uniqueWoundLocation,
+    weight_score: overallWeightScore,
+    confidence: parseFloat(confidence),
+    breed_detected: randomBreed,
+    estimated_weight: `${randomWeight} kg`,
+    overall_health: overallHealth,
+    temperature_estimated: "38.5°C",
+    hydration_level: woundDetected ? "Low" : "Good",
+    movement_score: woundDetected ? "Restricted" : "Active",
+    photos_analyzed: photoCount,
+    analysis_notes: `Analyzed ${photoCount} photos from different angles. ${photoCount >= 3 ? "Multi-angle analysis provides higher confidence." : "More photos would improve accuracy."}`
+  };
 }
 
-/* ===============================
-   Enhanced Camera modal with scanning
-   =============================== */
-let cameraStream = null;
-let currentCameraTargetId = null; // animal id when triggered from profile
+/* ==========================
+   Camera modal with multi-photo upload
+   ========================== */
 let scanInProgress = false;
+let currentCameraTargetId = null; // animal id when triggered from profile
 
 async function openCameraModal(mode='scan', targetId=null){
   currentCameraTargetId = targetId;
+  currentCameraMode = 'photo'; // Start with photo mode
+  
+  // Reset photo uploads
+  clearPhotos();
+  
   el('#modal-camera').classList.remove('hidden');
   el('#modal-camera').ariaHidden = 'false';
-  el('#camera-preview').style.display = 'none';
-  el('#camera-video').style.display = 'block';
-  el('#scan-status').textContent = 'Position cattle in frame';
+  el('#scan-status').textContent = 'Ready to upload photos';
   el('#scan-progress').style.width = '0%';
   scanInProgress = false;
   
-  // Reset file input
-  el('#camera-file-input').value = '';
+  // Reset camera mode UI
+  el('#mode-photo').classList.add('active');
+  el('#mode-video').classList.remove('active');
+  el('#photo-mode-content').classList.remove('hidden');
+  el('#video-mode-content').classList.add('hidden');
   
-  // start camera if available
+  // Update instruction text based on target
+  const instruction = targetId ? 
+    'Upload multiple photos of this cattle for detailed analysis' : 
+    'Upload multiple photos of cattle for identification and analysis';
+  
+  // Don't start camera for photo mode (upload only)
   const video = el('#camera-video');
-  try{
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach(track => track.stop());
+    video.srcObject = null;
+  }
+  
+  // Update UI
+  updatePhotoUploadUI();
+}
+
+/* Close camera modal */
+function closeCameraModal(){
+  el('#modal-camera').classList.add('hidden');
+  el('#modal-camera').ariaHidden = 'true';
+  
+  // Stop recording if active
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+  }
+  
+  // stop stream
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t=>t.stop());
+    cameraStream = null;
+  }
+  
+  scanInProgress = false;
+  isRecording = false;
+  recordedChunks = [];
+  clearPhotos();
+}
+
+/* Switch camera mode */
+el('#mode-photo').addEventListener('click', function() {
+  if (currentCameraMode === 'photo') return;
+  
+  currentCameraMode = 'photo';
+  el('#mode-photo').classList.add('active');
+  el('#mode-video').classList.remove('active');
+  el('#photo-mode-content').classList.remove('hidden');
+  el('#video-mode-content').classList.add('hidden');
+  
+  // Stop recording if active
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    el('#recording-indicator').classList.add('hidden');
+  }
+  
+  // Stop camera stream for photo mode (upload only)
+  const video = el('#camera-video');
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach(track => track.stop());
+    video.srcObject = null;
+  }
+  
+  // Clear photos when switching to photo mode
+  clearPhotos();
+});
+
+el('#mode-video').addEventListener('click', async function() {
+  if (currentCameraMode === 'video') return;
+  
+  currentCameraMode = 'video';
+  el('#mode-photo').classList.remove('active');
+  el('#mode-video').classList.add('active');
+  el('#photo-mode-content').classList.add('hidden');
+  el('#video-mode-content').classList.remove('hidden');
+  
+  // Clear photos when switching to video mode
+  clearPhotos();
+  
+  // Start camera for video mode
+  const video = el('#camera-video');
+  try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
       video: {
         facingMode: 'environment',
@@ -1999,90 +2551,385 @@ async function openCameraModal(mode='scan', targetId=null){
     });
     video.srcObject = cameraStream;
     video.play();
-    el('#camera-instruction').textContent = 'Position cattle in frame and capture or upload a photo';
-  }catch(e){
+    el('#camera-instruction').textContent = 'Record a video or upload existing video of cattle';
+  } catch(e) {
     video.srcObject = null;
     console.warn('Camera not available, use file upload fallback', e);
-    el('#camera-instruction').textContent = 'Camera not available. Please upload a photo instead.';
-    el('#camera-snap').disabled = true;
-    el('#camera-snap').innerHTML = '<i class="ri-camera-off-line"></i> Camera Unavailable';
+    el('#camera-instruction').textContent = 'Camera not available. Please upload a video instead.';
+    el('#video-record-btn').disabled = true;
   }
-}
+});
 
-/* Close camera modal */
-function closeCameraModal(){
-  el('#modal-camera').classList.add('hidden');
-  el('#modal-camera').ariaHidden = 'true';
-  // stop stream
-  if (cameraStream) {
-    cameraStream.getTracks().forEach(t=>t.stop());
-    cameraStream = null;
-  }
-  scanInProgress = false;
-}
+/* File upload handlers */
+el('#file-upload-area').addEventListener('click', () => el('#camera-file-input').click());
 
-/* Snapshot from video */
-async function captureFromVideo(){
-  if (scanInProgress) return null;
+el('#camera-file-input').addEventListener('change', async function(ev) {
+  const files = Array.from(ev.target.files);
   
-  const video = el('#camera-video');
-  if (!video || video.readyState < 2) {
-    alert('Camera not ready. You can upload a photo instead.');
-    return null;
+  if (files.length === 0) return;
+  
+  // Filter only image files
+  const imageFiles = files.filter(file => file.type.match('image.*'));
+  
+  if (imageFiles.length === 0) {
+    showToast('Please select image files only', 'error');
+    return;
   }
   
-  // Show preview
-  const canvas = document.createElement('canvas'); 
-  canvas.width = video.videoWidth; 
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d'); 
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  // Check if adding these would exceed reasonable limit
+  if (uploadedPhotos.length + imageFiles.length > 10) {
+    showToast('Maximum 10 photos allowed', 'warning');
+    return;
+  }
   
-  // Show the captured image
-  el('#camera-preview').src = canvas.toDataURL('image/jpeg');
-  el('#camera-preview').style.display = 'block';
-  el('#camera-video').style.display = 'none';
+  // Add each photo
+  for (const file of imageFiles) {
+    await addPhoto(file);
+  }
   
-  return await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.9));
-}
+  // Reset file input
+  ev.target.value = '';
+  
+  showToast(`Added ${imageFiles.length} photo${imageFiles.length !== 1 ? 's' : ''}`, 'success');
+});
 
-/* File upload fallback */
-el('#camera-use-file').onclick = ()=>el('#camera-file-input').click();
+// Drag and drop support
+el('#file-upload-area').addEventListener('dragover', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  el('#file-upload-area').style.borderColor = 'var(--accent)';
+  el('#file-upload-area').style.background = 'rgba(91, 146, 121, 0.1)';
+});
 
-el('#camera-file-input').onchange = async (ev)=>{
+el('#file-upload-area').addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  el('#file-upload-area').style.borderColor = '';
+  el('#file-upload-area').style.background = '';
+});
+
+el('#file-upload-area').addEventListener('drop', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  el('#file-upload-area').style.borderColor = '';
+  el('#file-upload-area').style.background = '';
+  
+  const files = Array.from(e.dataTransfer.files);
+  const imageFiles = files.filter(file => file.type.match('image.*'));
+  
+  if (imageFiles.length === 0) {
+    showToast('Please drop image files only', 'error');
+    return;
+  }
+  
+  // Check if adding these would exceed reasonable limit
+  if (uploadedPhotos.length + imageFiles.length > 10) {
+    showToast('Maximum 10 photos allowed', 'warning');
+    return;
+  }
+  
+  // Add each photo
+  for (const file of imageFiles) {
+    await addPhoto(file);
+  }
+  
+  showToast(`Added ${imageFiles.length} photo${imageFiles.length !== 1 ? 's' : ''} via drag & drop`, 'success');
+});
+
+/* Analyze photos button */
+el('#btn-analyze-photos').addEventListener('click', async function() {
+  if (scanInProgress) return;
+  
+  if (uploadedPhotos.length < 3) {
+    showToast(`Please upload at least 3 photos. You have ${uploadedPhotos.length}.`, 'error');
+    return;
+  }
+  
+  scanInProgress = true;
+  el('#scan-status').textContent = `Analyzing ${uploadedPhotos.length} photos...`;
+  
+  // Simulate scanning progress
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += 5;
+    el('#scan-progress').style.width = progress + '%';
+    if (progress >= 100) {
+      clearInterval(progressInterval);
+    }
+  }, 100);
+  
+  // Run mock multi-photo AI analysis
+  setTimeout(async () => {
+    clearInterval(progressInterval);
+    el('#scan-progress').style.width = '100%';
+    
+    const result = mockMultiPhotoAIAnalyze(uploadedPhotos);
+    el('#scan-status').textContent = 'Analysis complete!';
+    
+    // Process results based on context
+    if (currentCameraTargetId){
+      const animal = STATE.animals.find(a=>a.id===currentCameraTargetId);
+      if (!animal) { 
+        showToast('Animal missing', 'error'); 
+        closeCameraModal(); 
+        scanInProgress = false;
+        return; 
+      }
+      
+      // Update animal data
+      animal.weight_score = result.weight_score;
+      animal.health_status = result.overall_health === 'Critical' ? 'Critical' : 
+                           (result.overall_health === 'Warning' ? 'Warning' : 'Good');
+      
+      // Create alert if problem detected
+      if (result.wound_detected || result.weight_score!=='Normal'){
+        const alertId = 'a'+Math.floor(Math.random()*1000000);
+        const severity = result.wound_detected ? 'High' : (result.weight_score==='Low' ? 'Medium' : 'Low');
+        const newAlert = { 
+          alert_id: alertId, 
+          animal_id: animal.id, 
+          type: result.wound_detected ? 'Wound detected' : `${result.weight_score} weight`, 
+          severity, 
+          timestamp: (new Date()).toISOString(),
+          message: result.wound_detected ? 
+            `Wound detected on ${result.wound_location} (from ${result.photos_analyzed} photos)` : 
+            `Weight: ${result.estimated_weight} (${result.weight_score}) - Multi-photo analysis`
+        };
+        STATE.alerts.push(newAlert);
+        animal.alerts = animal.alerts || []; 
+        animal.alerts.push(newAlert);
+        
+        // Save state
+        saveState(STATE, currentUser.uid);
+      }
+      
+      renderAllAlerts(); 
+      renderAlertsPreview(); 
+      renderAnimalsList(); 
+      renderStats();
+      
+      // Show results modal
+      setTimeout(() => {
+        closeCameraModal();
+        showScanResults(result, animal);
+      }, 500);
+      
+    } else {
+      // If scanning from dashboard, simulate tag/face recognition
+      let matchedAnimal = null;
+      if (Math.random() < 0.7) {
+        matchedAnimal = STATE.animals[Math.floor(Math.random() * STATE.animals.length)];
+      }
+      
+      // Show results modal
+      setTimeout(() => {
+        closeCameraModal();
+        showScanResults(result, matchedAnimal);
+      }, 500);
+    }
+    
+    scanInProgress = false;
+  }, 3000 + (uploadedPhotos.length * 500)); // Simulate longer processing for more photos
+});
+
+/* Video recording functionality (unchanged from before) */
+el('#video-record-btn').addEventListener('click', async function() {
+  if (!cameraStream) {
+    showToast('Camera not available', 'error');
+    return;
+  }
+  
+  if (!isRecording) {
+    // Start recording
+    try {
+      mediaRecorder = new MediaRecorder(cameraStream, {
+        mimeType: 'video/webm;codecs=vp9'
+      });
+      
+      recordedChunks = [];
+      
+      mediaRecorder.ondataavailable = function(event) {
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+      
+      mediaRecorder.onstop = function() {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const videoPlayback = el('#video-playback');
+        videoPlayback.src = URL.createObjectURL(blob);
+        videoPlayback.style.display = 'block';
+        el('#camera-video').style.display = 'none';
+        el('#scan-status').textContent = 'Video recorded. Ready for analysis.';
+        isRecording = false;
+        el('#recording-indicator').classList.add('hidden');
+        el('#video-record-btn').innerHTML = '<i class="ri-record-circle-line"></i> Start Recording';
+      };
+      
+      mediaRecorder.start(1000); // Collect data every second
+      isRecording = true;
+      el('#recording-indicator').classList.remove('hidden');
+      el('#video-record-btn').innerHTML = '<i class="ri-stop-circle-line"></i> Stop Recording';
+      el('#scan-status').textContent = 'Recording...';
+      
+      // Auto-stop after 30 seconds
+      setTimeout(() => {
+        if (isRecording && mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+        }
+      }, 30000);
+      
+    } catch (error) {
+      console.error('Error recording video:', error);
+      showToast('Video recording failed: ' + error.message, 'error');
+    }
+  } else {
+    // Stop recording
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+    }
+  }
+});
+
+/* Video file upload */
+el('#video-use-file').addEventListener('click', ()=>el('#video-file-input').click());
+
+el('#video-file-input').addEventListener('change', async function(ev) {
   const file = ev.target.files[0]; 
   if (!file) return;
   
   // Validate file type
-  if (!file.type.match('image.*')) {
-    alert('Please select an image file (JPEG, PNG, etc.)');
+  if (!file.type.match('video.*')) {
+    alert('Please select a video file (MP4, MOV, etc.)');
     return;
   }
   
   // Show preview
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    el('#camera-preview').src = e.target.result;
-    el('#camera-preview').style.display = 'block';
-    el('#camera-video').style.display = 'none';
-    el('#scan-status').textContent = 'Photo ready for analysis';
-  };
-  reader.readAsDataURL(file);
+  const videoPlayback = el('#video-playback');
+  videoPlayback.src = URL.createObjectURL(file);
+  videoPlayback.style.display = 'block';
+  el('#camera-video').style.display = 'none';
+  el('#scan-status').textContent = 'Video ready for analysis';
   
-  // Process the file
-  await processCapturedPhoto(file);
-};
+  // Process the video file
+  await processCapturedVideo(file);
+});
 
-/* When user presses capture */
-el('#camera-snap').onclick = async ()=>{
+/* Process video file */
+async function processCapturedVideo(videoBlob) {
   if (scanInProgress) return;
+  scanInProgress = true;
   
-  el('#scan-status').textContent = 'Capturing photo...';
-  const blob = await captureFromVideo();
-  if (blob) {
-    await processCapturedPhoto(blob);
-  }
-};
+  el('#scan-status').textContent = 'Analyzing video...';
+  
+  // Simulate scanning progress
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += 10;
+    el('#scan-progress').style.width = progress + '%';
+    if (progress >= 100) {
+      clearInterval(progressInterval);
+    }
+  }, 100);
+  
+  // Simulate video analysis
+  setTimeout(async () => {
+    clearInterval(progressInterval);
+    el('#scan-progress').style.width = '100%';
+    
+    // Mock video analysis results
+    const result = {
+      wound_detected: Math.random() < 0.2,
+      wound_location: Math.random() < 0.2 ? "hind leg" : null,
+      weight_score: ["Normal", "Low", "High"][Math.floor(Math.random() * 3)],
+      confidence: (Math.random() * 0.2 + 0.8).toFixed(2),
+      breed_detected: ["Holstein", "Jersey", "Angus", "Hereford"][Math.floor(Math.random() * 4)],
+      estimated_weight: `${Math.floor(Math.random() * 200) + 350} kg`,
+      overall_health: Math.random() < 0.3 ? "Warning" : "Good",
+      temperature_estimated: "38.5°C",
+      hydration_level: "Good",
+      movement_score: Math.random() < 0.2 ? "Restricted" : "Normal",
+      behavior_analysis: Math.random() < 0.3 ? "Possible lameness detected" : "Normal gait",
+      video_duration: "15 seconds",
+      motion_patterns: "Normal"
+    };
+    
+    if (result.wound_detected) {
+      result.overall_health = "Critical";
+    }
+    
+    el('#scan-status').textContent = 'Video analysis complete!';
+    
+    // Process results
+    if (currentCameraTargetId){
+      const animal = STATE.animals.find(a=>a.id===currentCameraTargetId);
+      if (!animal) { 
+        showToast('Animal missing', 'error'); 
+        closeCameraModal(); 
+        scanInProgress = false;
+        return; 
+      }
+      
+      // Update animal data
+      animal.weight_score = result.weight_score;
+      animal.health_status = result.overall_health === 'Critical' ? 'Critical' : 
+                           (result.overall_health === 'Warning' ? 'Warning' : 'Good');
+      
+      // create alert if problem
+      if (result.wound_detected || result.weight_score!=='Normal' || result.behavior_analysis.includes("lameness")){
+        const alertId = 'a'+Math.floor(Math.random()*1000000);
+        const severity = result.wound_detected ? 'High' : (result.weight_score==='Low' ? 'Medium' : 'Low');
+        const alertType = result.wound_detected ? 'Wound detected' : 
+                         (result.behavior_analysis.includes("lameness") ? 'Movement issue' : `${result.weight_score} weight`);
+        
+        const newAlert = { 
+          alert_id: alertId, 
+          animal_id: animal.id, 
+          type: alertType, 
+          severity, 
+          timestamp: (new Date()).toISOString(),
+          message: result.wound_detected ? 
+            `Wound detected on ${result.wound_location}` : 
+            (result.behavior_analysis.includes("lameness") ? 
+              `Movement issue: ${result.behavior_analysis}` :
+              `Weight: ${result.estimated_weight} (${result.weight_score})`)
+        };
+        STATE.alerts.push(newAlert);
+        animal.alerts = animal.alerts || []; 
+        animal.alerts.push(newAlert);
+        
+        // Save state
+        saveState(STATE, currentUser.uid);
+      }
+      
+      renderAllAlerts(); 
+      renderAlertsPreview(); 
+      renderAnimalsList(); 
+      renderStats();
+      
+      // Show results modal
+      setTimeout(() => {
+        closeCameraModal();
+        showScanResults(result, animal);
+      }, 500);
+      
+    } else {
+      // If scanning from dashboard, simulate tag/face recognition
+      let matchedAnimal = null;
+      if (Math.random() < 0.7) {
+        matchedAnimal = STATE.animals[Math.floor(Math.random() * STATE.animals.length)];
+      }
+      
+      // Show results modal
+      setTimeout(() => {
+        closeCameraModal();
+        showScanResults(result, matchedAnimal);
+      }, 500);
+    }
+    
+    scanInProgress = false;
+  }, 3000);
+}
 
 /* Show scan results modal */
 function showScanResults(result, matchedAnimal){
@@ -2142,6 +2989,15 @@ function showScanResults(result, matchedAnimal){
     `;
   }
   
+  // Add analysis notes for multi-photo
+  if (result.photos_analyzed) {
+    resultsHTML += `
+      <div class="info-note" style="margin: 12px 0;">
+        <i class="ri-information-line"></i> ${result.analysis_notes}
+      </div>
+    `;
+  }
+  
   // Add scan details
   resultsHTML += `
     <div style="margin: 20px 0;">
@@ -2182,6 +3038,35 @@ function showScanResults(result, matchedAnimal){
       </div>
   `;
   
+  // Add photos analyzed count
+  if (result.photos_analyzed) {
+    resultsHTML += `
+      <div class="scan-result-item">
+        <div class="scan-result-label">Photos Analyzed</div>
+        <div class="scan-result-value">${result.photos_analyzed}</div>
+      </div>
+    `;
+  }
+  
+  // Add video-specific results if available
+  if (result.behavior_analysis) {
+    resultsHTML += `
+      <div class="scan-result-item">
+        <div class="scan-result-label">Behavior Analysis</div>
+        <div class="scan-result-value">${result.behavior_analysis}</div>
+      </div>
+    `;
+  }
+  
+  if (result.video_duration) {
+    resultsHTML += `
+      <div class="scan-result-item">
+        <div class="scan-result-label">Video Duration</div>
+        <div class="scan-result-value">${result.video_duration}</div>
+      </div>
+    `;
+  }
+  
   // Add wound detection if present
   if (result.wound_detected) {
     resultsHTML += `
@@ -2210,99 +3095,6 @@ function closeScanResults(){
   el('#modal-results').ariaHidden = 'true';
   lastScanResult = null;
   lastScannedAnimal = null;
-}
-
-/* Process photo result with scanning animation */
-async function processCapturedPhoto(blob){
-  if (scanInProgress) return;
-  scanInProgress = true;
-  
-  el('#scan-status').textContent = 'Analyzing image...';
-  
-  // Simulate scanning progress
-  let progress = 0;
-  const progressInterval = setInterval(() => {
-    progress += 10;
-    el('#scan-progress').style.width = progress + '%';
-    if (progress >= 100) {
-      clearInterval(progressInterval);
-    }
-  }, 100);
-  
-  // Run mock vision AI after a short delay
-  setTimeout(async () => {
-    // Run mock vision AI
-    const result = mockVisionAIAnalyze(blob);
-    
-    clearInterval(progressInterval);
-    el('#scan-progress').style.width = '100%';
-    el('#scan-status').textContent = 'Analysis complete!';
-    
-    // If called from profile -> update animal
-    if (currentCameraTargetId){
-      const animal = STATE.animals.find(a=>a.id===currentCameraTargetId);
-      if (!animal) { 
-        showToast('Animal missing', 'error'); 
-        closeCameraModal(); 
-        scanInProgress = false;
-        return; 
-      }
-      
-      // Update animal data
-      animal.weight_score = result.weight_score;
-      animal.health_status = result.overall_health === 'Critical' ? 'Critical' : 
-                             (result.overall_health === 'Warning' ? 'Warning' : 'Good');
-      
-      // create alert if problem
-      if (result.wound_detected || result.weight_score!=='Normal'){
-        const alertId = 'a'+Math.floor(Math.random()*1000000);
-        const severity = result.wound_detected ? 'High' : (result.weight_score==='Low' ? 'Medium' : 'Low');
-        const newAlert = { 
-          alert_id: alertId, 
-          animal_id: animal.id, 
-          type: result.wound_detected ? 'Wound detected' : `${result.weight_score} weight`, 
-          severity, 
-          timestamp: (new Date()).toISOString(),
-          message: result.wound_detected ? 
-            `Wound detected on ${result.wound_location}` : 
-            `Weight: ${result.estimated_weight} (${result.weight_score})`
-        };
-        STATE.alerts.push(newAlert);
-        animal.alerts = animal.alerts || []; 
-        animal.alerts.push(newAlert);
-        
-        // Save state
-        saveState(STATE, currentUser.uid);
-      }
-      
-      renderAllAlerts(); 
-      renderAlertsPreview(); 
-      renderAnimalsList(); 
-      renderStats();
-      
-      // Show results modal
-      setTimeout(() => {
-        closeCameraModal();
-        showScanResults(result, animal);
-      }, 500);
-      
-    } else {
-      // If scanning from dashboard, simulate tag/face recognition:
-      // 30% chance to detect as new cattle, 70% chance to match existing
-      let matchedAnimal = null;
-      if (Math.random() < 0.7) {
-        matchedAnimal = STATE.animals[Math.floor(Math.random() * STATE.animals.length)];
-      }
-      
-      // Show results modal
-      setTimeout(() => {
-        closeCameraModal();
-        showScanResults(result, matchedAnimal);
-      }, 500);
-    }
-    
-    scanInProgress = false;
-  }, 2000);
 }
 
 /* Open camera modal utility */
@@ -2337,48 +3129,44 @@ el('#results-view-profile').onclick = function() {
 el('#back-to-dashboard').onclick = ()=>{ showView('dashboard'); }
 el('#btn-open-alerts').onclick = ()=>{ showView('alerts'); }
 el('#alerts-back').onclick = ()=>{ showView('dashboard'); }
-el('#sec-back').onclick = ()=>{ showView('dashboard'); }
+el('#user-profile-back').onclick = ()=>{ showView('dashboard'); }
 
 // Footer navigation
 els('.nav-btn').forEach(btn => {
   btn.addEventListener('click', function() {
     const view = this.dataset.view;
     showView(view);
-    if (view === 'security') renderSecurity();
   });
 });
 
 // Profile button in header
 el('#btn-profile').addEventListener('click', function() {
-  if (currentUser) {
-    alert(`Profile Information:\n\nName: ${currentUser.displayName}\nEmail: ${currentUser.email}\n\nAccount management features would be implemented in a production version.`);
-  } else {
-    alert('User profile information not available.');
-  }
+  showView('user-profile');
 });
 
-el('#nav-animals').onclick = ()=>{ 
-  showView('dashboard'); 
-  // Scroll to animals section
-  setTimeout(() => {
-    const animalsSection = document.querySelector('#animals-list').closest('.card');
-    animalsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
-}
+// Profile actions
+el('#btn-logout-profile').addEventListener('click', handleLogout);
 
-/* Security center demo toggle - simulate tampering detection every 10s */
-setInterval(()=>{
-  // small random flip to demo 'tampering detected' once in a while
-  if (el('#view-security').classList.contains('active')) {
-    const tamper = Math.random() < 0.05;
-    el('#sec-integrity').textContent = `Tampering: ${tamper ? 'DETECTED' : 'OK'}`;
-  }
-}, 10000);
+el('#btn-change-password').addEventListener('click', function() {
+  showToast('Password change feature would be implemented in a production version', 'info');
+});
+
+el('#btn-notifications').addEventListener('click', function() {
+  showToast('Notification settings would be implemented in a production version', 'info');
+});
+
+el('#btn-cattle-management').addEventListener('click', function() {
+  showToast('Cattle management features would be implemented in a production version', 'info');
+});
+
+el('#btn-privacy').addEventListener('click', function() {
+  showToast('Privacy settings would be implemented in a production version', 'info');
+});
 
 /* Ensure rendering refresh after state updates (useful while demoing) */
 window.refreshUI = ()=>{
   if (!STATE) return;
-  renderStats(); renderAnimalsList(); renderAlertsPreview(); renderAllAlerts();
+  renderStats(); renderAnimalsList(); renderAlertsPreview(); renderAllAlerts(); renderUserProfile();
 };
 
 /* Immediately expose STATE for debugging in dev console */
