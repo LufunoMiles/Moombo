@@ -121,7 +121,7 @@ def predict_image(image_path):
         traceback.print_exc()
         return None
     
-# Add this function to app.py
+    # Add this function to app.py
 def get_disease_info(disease_class, confidence):
     """Get disease information, causes, and treatment suggestions"""
     
@@ -319,54 +319,6 @@ def upload_file():
         result = predict_image(filepath)
         
         if result:
-            # Create confidence chart
-            chart_image = create_confidence_chart(result['all_predictions'])
-            
-            return render_template('result.html', 
-                                 result=result,
-                                 chart_image=chart_image,
-                                 filename=filename)
-        else:
-            flash('Error making prediction. Please try another image.', 'error')
-            return redirect(url_for('index'))
-    
-    else:
-        flash('Allowed file types are: png, jpg, jpeg, gif, bmp', 'error')
-        return redirect(url_for('index'))
-
-@app.route('/about')
-def about():
-    """About page"""
-    return render_template('about.html') if os.path.exists('templates/about.html') else "About page"
-
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    """Handle file upload and prediction"""
-    if 'file' not in request.files:
-        flash('No file selected', 'error')
-        return redirect(url_for('index'))
-    
-    file = request.files['file']
-    
-    if file.filename == '':
-        flash('No file selected', 'error')
-        return redirect(url_for('index'))
-    
-    if file and allowed_file(file.filename):
-        # Secure filename and save
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        
-        # Create uploads folder if it doesn't exist
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-        
-        # Save file
-        file.save(filepath)
-        
-        # Make prediction
-        result = predict_image(filepath)
-        
-        if result:
             # Get disease information
             disease_info = get_disease_info(
                 result['top_prediction']['class'], 
@@ -388,6 +340,40 @@ def upload_file():
     else:
         flash('Allowed file types are: png, jpg, jpeg, gif, bmp', 'error')
         return redirect(url_for('index'))
+
+@app.route('/about')
+def about():
+    """About page"""
+    return render_template('about.html') if os.path.exists('templates/about.html') else "About page"
+
+@app.route('/api/predict', methods=['POST'])
+def api_predict():
+    """API endpoint for predictions"""
+    if 'file' not in request.files:
+        return {'error': 'No file provided'}, 400
+    
+    file = request.files['file']
+    
+    if file and allowed_file(file.filename):
+        # Save temporarily
+        filename = secure_filename(file.filename)
+        temp_path = os.path.join('/tmp', filename)
+        file.save(temp_path)
+        
+        # Make prediction
+        result = predict_image(temp_path)
+        
+        # Clean up
+        os.remove(temp_path)
+        
+        if result:
+            return {
+                'success': True,
+                'predictions': result['all_predictions'],
+                'top_prediction': result['top_prediction']
+            }
+    
+    return {'error': 'Invalid file'}, 400
 
 if __name__ == '__main__':
     # Load model at startup
