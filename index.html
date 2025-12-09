@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#5b9279" />
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Moombo AI Monitor</title>
+<title>Cattle AI Monitor</title>
 <!-- RemixIcon CDN -->
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 <style>
@@ -16,9 +16,9 @@
     --bg-light: #ffffff;
     --bg-lighter: #f8f9fa;
     --card-bg: #ffffff;
-    --accent: #5b9279;
-    --accent-hover: #4a8069;
-    --accent-light: #7db89a;
+    --accent: rgb(194, 122, 71);
+    --accent-hover: rgb(154, 88, 40);
+    --accent-light: rgb(194, 122, 71);
     --muted: #6c757d;
     --muted-darker: #495057;
     --text-primary: #212529;
@@ -65,7 +65,7 @@
   .splash-logo {
     width: 80px;
     height: 80px;
-    background: chocolate;
+   background-color: var(--accent);
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -299,6 +299,7 @@
     background: var(--accent);
     border: 0;
     color: white;
+    font-weight: 600;
     font-size: 1rem;
     margin: 10px 0;
     cursor: pointer;
@@ -321,7 +322,7 @@
   
   /* Scan button at the top */
   .scan-top-btn {
-   background-color: rgba(210, 105, 30, 0.845);
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
     color: white;
     padding: 18px;
     margin-bottom: 20px;
@@ -514,6 +515,18 @@
     border: 1px solid var(--border);
     padding: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    animation: modalSlideIn 0.3s ease;
+  }
+  
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   
   .center {
@@ -708,17 +721,137 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+  
+  /* Scan Results Modal Styles */
+  .scan-results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .scan-results-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .scan-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .scan-result-item:last-child {
+    border-bottom: none;
+  }
+  
+  .scan-result-label {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  
+  .scan-result-value {
+    font-weight: 600;
+    text-align: right;
+  }
+  
+  .scan-result-good {
+    color: var(--good);
+  }
+  
+  .scan-result-warning {
+    color: var(--warn);
+  }
+  
+  .scan-result-danger {
+    color: var(--danger);
+  }
+  
+  .scan-result-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  
+  .scan-result-actions .btn-ghost {
+    flex: 1;
+  }
+  
+  .scan-result-actions .big-btn {
+    flex: 2;
+    margin: 0;
+  }
+  
+  /* Status indicator */
+  .status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  
+  .status-indicator.good {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--good);
+  }
+  
+  .status-indicator.warning {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--warn);
+  }
+  
+  .status-indicator.danger {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger);
+  }
+  
+  /* Animal match section */
+  .animal-match {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: var(--bg-lighter);
+    border-radius: 12px;
+    margin: 16px 0;
+    border: 1px solid var(--border);
+  }
+  
+  .animal-match-info {
+    flex: 1;
+  }
+  
+  .animal-match-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+  
+  .match-confidence {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
 </style>
 </head>
 <body>
   <!-- Splash Screen -->
   <div id="splash-screen">
     <div class="splash-logo">
-          <img src="/cow.png"  width="40" alt="">
+  <img src="/cow.png" width="40" alt="">
     </div>
     <div class="splash-text">M<span style="color: chocolate;">oo</span>mbo</div>
     <div class="splash-subtext">Intelligent Livestock Management</div>
-  </div> 
+  </div>
 
   <!-- Auth Screens -->
   <div id="auth-screen" class="hidden">
@@ -726,7 +859,7 @@
     <div id="auth-login" class="auth-view">
       <div class="auth-header">
         <div class="auth-logo">
-          <img src="/cow.png" alt="">
+          <i class="ri-cow-line"></i>
         </div>
         <div class="auth-title">Welcome Back</div>
         <div class="auth-subtitle">Sign in to monitor your cattle</div>
@@ -838,7 +971,7 @@
       <div class="app-header-content">
         <div>
           <h1>M<span style="color: chocolate;">oo</span>mbo</h1>
-          <div class="muted text-xs">Your livestock management assistant</div>
+          
         </div>
         <div class="header-actions">
           <button class="header-btn" id="btn-profile" title="Profile">
@@ -857,7 +990,7 @@
       <div id="view-dashboard" class="view active">
         <!-- Scan Button at Top -->
         <button class="big-btn scan-top-btn" id="btn-scan-top">
-          <i class="ri-camera-line"></i> Scan Cattle
+          <i class="ri-camera-3-line"></i> Scan 
         </button>
 
         <section class="card">
@@ -942,7 +1075,7 @@
 
           <div class="mt8">
             <button class="big-btn" id="profile-scan">
-              <i class="ri-camera-line"></i> Scan this Cattle
+              <i class="ri-camera-line"></i> Scan
             </button>
             <button class="big-btn" id="profile-history">
               <i class="ri-history-line"></i> View Health History
@@ -1022,19 +1155,19 @@
     <footer class="app-footer">
       <button class="nav-btn active" data-view="dashboard" id="nav-dashboard">
         <i class="ri-home-4-line nav-icon"></i>
-        
+     
       </button>
       <button class="nav-btn" data-view="animals" id="nav-animals">
-        <img src="/cow.png" width="30" alt="">
-        
+      <img src="/cow.png" width="20" alt="">
+    
       </button>
       <button class="nav-btn" data-view="alerts" id="nav-alerts">
         <i class="ri-alarm-warning-line nav-icon"></i>
-      
+        
       </button>
       <button class="nav-btn" data-view="security" id="nav-security">
         <i class="ri-shield-keyhole-line nav-icon"></i>
-       
+     
       </button>
     </footer>
   </div>
@@ -1063,7 +1196,7 @@
         
         <div class="camera-actions">
           <button class="btn-ghost" id="camera-use-file">
-            <i class="ri-folder-upload-line"></i> Upload Photo
+            <i class="ri-folder-upload-line"></i> Upload
           </button>
           <button class="big-btn" id="camera-snap">
             <i class="ri-camera-line"></i> Capture Photo
@@ -1075,6 +1208,33 @@
         <div class="muted small mt8" id="scan-status">
           Ready to scan
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCAN RESULTS MODAL -->
+  <div id="modal-results" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="modal">
+      <div class="scan-results-header">
+        <div class="scan-results-title">
+          <i class="ri-search-eye-line"></i> Scan Results
+        </div>
+        <button class="btn-ghost" id="modal-results-close" style="padding: 8px 12px;">
+          <i class="ri-close-line"></i> Close
+        </button>
+      </div>
+      
+      <div id="scan-results-content">
+        <!-- Results will be populated here -->
+      </div>
+      
+      <div class="scan-result-actions">
+        <button class="btn-ghost" id="results-scan-other">
+          <i class="ri-camera-line"></i> Scan Another
+        </button>
+        <button class="big-btn" id="results-view-profile">
+          <i class="ri-cow-line"></i> View Cattle Profile
+        </button>
       </div>
     </div>
   </div>
@@ -1156,6 +1316,12 @@ function saveState(state){
   localStorage.setItem('lam_mvp_v3', JSON.stringify(state));
 }
 let STATE = loadState();
+
+/* ====================
+   Global variables for scan results
+   ==================== */
+let lastScanResult = null;
+let lastScannedAnimal = null;
 
 /* ====================
    Utilities & helpers
@@ -1477,41 +1643,65 @@ function mockVisionAIAnalyze(imageBlob){
   // This is a mock. In real app you'd send image to an ML model or run on-device inference.
   // We'll randomly decide presence of wound or weight issues to demonstrate flow.
   const rnd = Math.random();
+  
+  // Random breed selection
+  const breeds = ["Holstein", "Jersey", "Angus", "Hereford", "Brahman", "Simmental"];
+  const randomBreed = breeds[Math.floor(Math.random() * breeds.length)];
+  
+  // Random weight between 350-550 kg
+  const randomWeight = Math.floor(Math.random() * 200) + 350;
+  
   if (rnd < 0.15) {
     return { 
       wound_detected: true, 
       wound_location: "hind leg", 
       weight_score: "Low", 
-      confidence: 0.92,
-      breed_detected: "Holstein",
-      estimated_weight: "450 kg"
+      confidence: (Math.random() * 0.2 + 0.8).toFixed(2),
+      breed_detected: randomBreed,
+      estimated_weight: `${randomWeight} kg`,
+      overall_health: "Critical",
+      temperature_estimated: "39.2°C",
+      hydration_level: "Low",
+      movement_score: "Restricted"
     };
   } else if (rnd < 0.35) {
     return { 
       wound_detected: false, 
       wound_location: null, 
       weight_score: "Low", 
-      confidence: 0.78,
-      breed_detected: "Jersey",
-      estimated_weight: "380 kg"
+      confidence: (Math.random() * 0.2 + 0.7).toFixed(2),
+      breed_detected: randomBreed,
+      estimated_weight: `${randomWeight} kg`,
+      overall_health: "Warning",
+      temperature_estimated: "38.8°C",
+      hydration_level: "Adequate",
+      movement_score: "Normal"
     };
   } else if (rnd < 0.5) {
     return { 
       wound_detected: false, 
       wound_location: null, 
       weight_score: "High", 
-      confidence: 0.85,
-      breed_detected: "Hereford",
-      estimated_weight: "520 kg"
+      confidence: (Math.random() * 0.2 + 0.8).toFixed(2),
+      breed_detected: randomBreed,
+      estimated_weight: `${randomWeight} kg`,
+      overall_health: "Warning",
+      temperature_estimated: "38.5°C",
+      hydration_level: "Good",
+      movement_score: "Active"
     };
   } else {
     return { 
       wound_detected: false, 
       wound_location: null, 
       weight_score: "Normal", 
-      confidence: 0.95,
-      breed_detected: "Angus",
-      estimated_weight: "480 kg"
+      confidence: (Math.random() * 0.2 + 0.85).toFixed(2),
+      breed_detected: randomBreed,
+      estimated_weight: `${randomWeight} kg`,
+      overall_health: "Good",
+      temperature_estimated: "38.5°C",
+      hydration_level: "Good",
+      movement_score: "Active"
     };
   }
 }
@@ -1634,6 +1824,134 @@ el('#camera-snap').onclick = async ()=>{
   }
 };
 
+/* Show scan results modal */
+function showScanResults(result, matchedAnimal){
+  // Store results globally for later use
+  lastScanResult = result;
+  lastScannedAnimal = matchedAnimal;
+  
+  // Determine health status color
+  let healthStatusClass = 'scan-result-good';
+  let healthStatusText = 'Good';
+  let healthStatusIndicator = 'good';
+  
+  if (result.overall_health === 'Critical') {
+    healthStatusClass = 'scan-result-danger';
+    healthStatusText = 'Critical';
+    healthStatusIndicator = 'danger';
+  } else if (result.overall_health === 'Warning') {
+    healthStatusClass = 'scan-result-warning';
+    healthStatusText = 'Warning';
+    healthStatusIndicator = 'warning';
+  }
+  
+  // Determine weight status color
+  let weightStatusClass = 'scan-result-good';
+  if (result.weight_score === 'Low') weightStatusClass = 'scan-result-warning';
+  if (result.weight_score === 'High') weightStatusClass = 'scan-result-warning';
+  
+  // Build results HTML
+  let resultsHTML = '';
+  
+  // If we matched an existing animal
+  if (matchedAnimal) {
+    resultsHTML += `
+      <div class="animal-match">
+        <div class="avatar" style="width:60px;height:60px;">
+          <i class="${matchedAnimal.icon || 'ri-cow-line'}"></i>
+        </div>
+        <div class="animal-match-info">
+          <div class="animal-match-name">${matchedAnimal.name}</div>
+          <div class="muted small">${matchedAnimal.species} • ${matchedAnimal.tag}</div>
+          <div class="match-confidence">Match confidence: ${(result.confidence * 100).toFixed(1)}%</div>
+        </div>
+      </div>
+    `;
+  } else {
+    resultsHTML += `
+      <div class="animal-match">
+        <div class="avatar" style="width:60px;height:60px;">
+          <i class="ri-cow-line"></i>
+        </div>
+        <div class="animal-match-info">
+          <div class="animal-match-name">New Cattle Detected</div>
+          <div class="muted small">Not in your database</div>
+          <div class="match-confidence">Detection confidence: ${(result.confidence * 100).toFixed(1)}%</div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Add scan details
+  resultsHTML += `
+    <div style="margin: 20px 0;">
+      <div class="scan-result-item">
+        <div class="scan-result-label">Overall Health</div>
+        <div class="scan-result-value">
+          <span class="status-indicator ${healthStatusIndicator}">
+            <i class="ri-heart-line"></i> ${healthStatusText}
+          </span>
+        </div>
+      </div>
+      
+      <div class="scan-result-item">
+        <div class="scan-result-label">Weight Status</div>
+        <div class="scan-result-value ${weightStatusClass}">
+          ${result.weight_score} (${result.estimated_weight})
+        </div>
+      </div>
+      
+      <div class="scan-result-item">
+        <div class="scan-result-label">Breed Detected</div>
+        <div class="scan-result-value">${result.breed_detected}</div>
+      </div>
+      
+      <div class="scan-result-item">
+        <div class="scan-result-label">Estimated Temp</div>
+        <div class="scan-result-value">${result.temperature_estimated}</div>
+      </div>
+      
+      <div class="scan-result-item">
+        <div class="scan-result-label">Hydration Level</div>
+        <div class="scan-result-value">${result.hydration_level}</div>
+      </div>
+      
+      <div class="scan-result-item">
+        <div class="scan-result-label">Movement Score</div>
+        <div class="scan-result-value">${result.movement_score}</div>
+      </div>
+  `;
+  
+  // Add wound detection if present
+  if (result.wound_detected) {
+    resultsHTML += `
+      <div class="scan-result-item">
+        <div class="scan-result-label">Wound Detected</div>
+        <div class="scan-result-value scan-result-danger">
+          <i class="ri-alert-line"></i> ${result.wound_location}
+        </div>
+      </div>
+    `;
+  }
+  
+  resultsHTML += `</div>`;
+  
+  // Update results content
+  el('#scan-results-content').innerHTML = resultsHTML;
+  
+  // Show the results modal
+  el('#modal-results').classList.remove('hidden');
+  el('#modal-results').ariaHidden = 'false';
+}
+
+/* Close scan results modal */
+function closeScanResults(){
+  el('#modal-results').classList.add('hidden');
+  el('#modal-results').ariaHidden = 'true';
+  lastScanResult = null;
+  lastScannedAnimal = null;
+}
+
 /* Process photo result with scanning animation */
 async function processCapturedPhoto(blob){
   if (scanInProgress) return;
@@ -1658,6 +1976,7 @@ async function processCapturedPhoto(blob){
     
     clearInterval(progressInterval);
     el('#scan-progress').style.width = '100%';
+    el('#scan-status').textContent = 'Analysis complete!';
     
     // If called from profile -> update animal
     if (currentCameraTargetId){
@@ -1671,8 +1990,8 @@ async function processCapturedPhoto(blob){
       
       // Update animal data
       animal.weight_score = result.weight_score;
-      animal.health_status = result.wound_detected ? 'Critical' : 
-                             (result.weight_score !== 'Normal' ? 'Warning' : 'Good');
+      animal.health_status = result.overall_health === 'Critical' ? 'Critical' : 
+                             (result.overall_health === 'Warning' ? 'Warning' : 'Good');
       
       // create alert if problem
       if (result.wound_detected || result.weight_score!=='Normal'){
@@ -1699,33 +2018,24 @@ async function processCapturedPhoto(blob){
       renderAnimalsList(); 
       renderStats();
       
-      el('#scan-status').textContent = 'Analysis complete!';
+      // Show results modal
       setTimeout(() => {
-        alert(`Scan Results for ${animal.name}:\n\n` +
-              `• Breed detected: ${result.breed_detected}\n` +
-              `• Estimated weight: ${result.estimated_weight}\n` +
-              `• Weight status: ${result.weight_score}\n` +
-              `• Wound detected: ${result.wound_detected ? 'Yes (' + result.wound_location + ')' : 'No'}\n` +
-              `• Confidence: ${(result.confidence * 100).toFixed(1)}%`);
         closeCameraModal();
+        showScanResults(result, animal);
       }, 500);
       
     } else {
       // If scanning from dashboard, simulate tag/face recognition:
-      const matched = STATE.animals[Math.floor(Math.random()*STATE.animals.length)];
+      // 30% chance to detect as new cattle, 70% chance to match existing
+      let matchedAnimal = null;
+      if (Math.random() < 0.7) {
+        matchedAnimal = STATE.animals[Math.floor(Math.random() * STATE.animals.length)];
+      }
       
-      el('#scan-status').textContent = 'Cattle identified!';
+      // Show results modal
       setTimeout(() => {
-        alert(`Scan Results:\n\n` +
-              `• Cattle identified: ${matched.name} (${matched.tag})\n` +
-              `• Breed: ${result.breed_detected}\n` +
-              `• Estimated weight: ${result.estimated_weight}\n` +
-              `• Weight status: ${result.weight_score}\n` +
-              `• Health check: ${result.wound_detected ? 'Wound detected' : 'No issues found'}\n\n` +
-              `Taking you to ${matched.name}'s profile...`);
-        
         closeCameraModal();
-        openProfile(matched.id);
+        showScanResults(result, matchedAnimal);
       }, 500);
     }
     
@@ -1736,6 +2046,28 @@ async function processCapturedPhoto(blob){
 /* Open camera modal utility */
 el('#btn-scan-top').onclick = ()=>openCameraModal('scan', null);
 el('#modal-camera-close').onclick = ()=>closeCameraModal();
+
+/* Scan results modal handlers */
+el('#modal-results-close').onclick = closeScanResults;
+
+el('#results-scan-other').onclick = function() {
+  closeScanResults();
+  setTimeout(() => {
+    openCameraModal('scan', null);
+  }, 300);
+};
+
+el('#results-view-profile').onclick = function() {
+  if (lastScannedAnimal) {
+    closeScanResults();
+    setTimeout(() => {
+      openProfile(lastScannedAnimal.id);
+    }, 300);
+  } else {
+    alert('This cattle is not in your database. You can add it from the dashboard.');
+    closeScanResults();
+  }
+};
 
 /* =====================
    Small UI bindings
