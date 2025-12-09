@@ -1069,7 +1069,7 @@
     margin-bottom: 12px;
   }
   
-  /* Video recorder */
+  /* Video recorder styles */
   .video-recorder {
     display: flex;
     flex-direction: column;
@@ -1083,6 +1083,7 @@
     color: var(--danger);
     font-weight: 600;
     justify-content: center;
+    margin-bottom: 16px;
   }
   
   .recording-dot {
@@ -1097,6 +1098,64 @@
     0% { opacity: 1; }
     50% { opacity: 0.3; }
     100% { opacity: 1; }
+  }
+  
+  .video-controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  
+  .video-controls .btn-ghost {
+    flex: 1;
+  }
+  
+  .video-controls .big-btn {
+    flex: 2;
+    margin: 0;
+  }
+  
+  .video-upload-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 16px;
+    background: var(--bg-lighter);
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 16px;
+  }
+  
+  .video-upload-btn:hover {
+    border-color: var(--accent);
+    background: rgba(91, 146, 121, 0.05);
+    color: var(--accent);
+  }
+  
+  .video-upload-btn i {
+    font-size: 1.2rem;
+  }
+  
+  /* Video playback */
+  #video-playback {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    display: none;
+    max-height: 250px;
+    object-fit: contain;
+    background: #000;
+  }
+  
+  .video-submit-btn {
+    width: 100%;
+    margin-top: 16px;
   }
 </style>
 </head>
@@ -1286,7 +1345,7 @@
         </div>
         <div class="header-actions">
           <button class="header-btn" id="btn-profile" title="Profile">
-          <i class="ri-notification-4-line"></i>
+            <i class="ri-user-line"></i>
           </button>
         </div>
       </div>
@@ -1594,6 +1653,9 @@
           </div>
           
           <div class="camera-actions">
+            <button class="btn-ghost" id="btn-upload-more">
+              <i class="ri-folder-upload-line"></i> Upload More
+            </button>
             <button class="big-btn" id="btn-analyze-photos" disabled style="opacity: 0.6;">
               <i class="ri-search-eye-line"></i> Analyze Photos
             </button>
@@ -1603,33 +1665,36 @@
         <!-- Video Mode Content -->
         <div id="video-mode-content" class="hidden">
           <video id="camera-video" autoplay playsinline></video>
-          <img id="camera-preview" alt="Preview">
+          <video id="video-playback" controls style="display: none; width: 100%; border-radius: 12px; margin-bottom: 16px;"></video>
           
-          <div class="muted small mb8" id="camera-instruction">
-            Record a video or upload existing video of cattle
+          <div class="recording-indicator hidden" id="recording-indicator">
+            <div class="recording-dot"></div>
+            <span>Recording video...</span>
           </div>
           
-          <div id="video-recorder-controls">
-            <div class="recording-indicator hidden" id="recording-indicator">
-              <div class="recording-dot"></div>
-              <span>Recording...</span>
-            </div>
-            
-            <div class="video-recorder">
-              <video id="video-playback" controls style="display: none; width: 100%; border-radius: 12px; margin-bottom: 16px;"></video>
-              
-              <div class="camera-actions">
-                <button class="btn-ghost" id="video-use-file">
-                  <i class="ri-folder-upload-line"></i> Upload Video
-                </button>
-                <button class="big-btn" id="video-record-btn">
-                  <i class="ri-record-circle-line"></i> Start Recording
-                </button>
-              </div>
-            </div>
+          <div class="muted small mb8" id="video-instruction">
+            Record a video or upload existing video of cattle for movement analysis
           </div>
           
+          <!-- Video Upload Button -->
+          <div class="video-upload-btn" id="video-upload-btn">
+            <i class="ri-folder-upload-line"></i>
+            <span>Upload Video File</span>
+          </div>
           <input type="file" accept="video/*" id="video-file-input" class="hidden">
+          
+          <div class="video-controls">
+            <button class="btn-ghost" id="video-record-btn">
+              <i class="ri-record-circle-line"></i> Start Recording
+            </button>
+            <button class="big-btn" id="video-stop-btn" style="display: none;">
+              <i class="ri-stop-circle-line"></i> Stop Recording
+            </button>
+          </div>
+          
+          <button class="big-btn video-submit-btn" id="video-submit-btn" disabled style="opacity: 0.6;">
+            <i class="ri-search-eye-line"></i> Submit Video for Scan
+          </button>
         </div>
         
         <div class="progress"><i id="scan-progress"></i></div>
@@ -1732,7 +1797,7 @@ const SAMPLE_DATA = {
       name: "Daisy",
       species: "Jersey",
       tag: "QR-012",
-      weight_score: "Low",
+      weight_score: "Abnormal",
       last_feed: "2025-12-08T10:00:00Z",
       health_status: "Warning",
       icon: "ri-cow-line",
@@ -1756,12 +1821,12 @@ const SAMPLE_DATA = {
       name: "Clara",
       species: "Hereford",
       tag: "QR-014",
-      weight_score: "High",
+      weight_score: "Low",
       last_feed: "2025-12-08T12:30:00Z",
       health_status: "Warning",
       icon: "ri-cow-line",
       alerts: [
-        { id: "a002", type: "Weight alert", severity: "Medium", timestamp: "2025-12-08T16:45:00Z", message: "Weight above normal range" }
+        { id: "a002", type: "Weight alert", severity: "Medium", timestamp: "2025-12-08T16:45:00Z", message: "Weight below normal range" }
       ]
     }
   ],
@@ -1817,6 +1882,7 @@ let mediaRecorder = null;
 let recordedChunks = [];
 let isRecording = false;
 let cameraStream = null;
+let currentVideoBlob = null;
 
 /* ====================
    Utilities & helpers
@@ -2356,6 +2422,89 @@ function clearPhotos() {
 }
 
 /* ==========================
+   Video recording functionality
+   ========================== */
+function updateVideoUI() {
+  const hasVideo = currentVideoBlob !== null;
+  const submitBtn = el('#video-submit-btn');
+  
+  if (hasVideo) {
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = '1';
+    el('#video-instruction').innerHTML = '<span style="color: var(--good);">Video ready for analysis ✓</span>';
+  } else {
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.6';
+    el('#video-instruction').textContent = 'Record a video or upload existing video of cattle for movement analysis';
+  }
+}
+
+function startVideoRecording() {
+  if (!cameraStream) {
+    showToast('Camera not available', 'error');
+    return;
+  }
+  
+  if (!isRecording) {
+    try {
+      mediaRecorder = new MediaRecorder(cameraStream, {
+        mimeType: 'video/webm;codecs=vp9'
+      });
+      
+      recordedChunks = [];
+      
+      mediaRecorder.ondataavailable = function(event) {
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+      
+      mediaRecorder.onstop = function() {
+        currentVideoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+        const videoPlayback = el('#video-playback');
+        videoPlayback.src = URL.createObjectURL(currentVideoBlob);
+        videoPlayback.style.display = 'block';
+        el('#camera-video').style.display = 'none';
+        
+        isRecording = false;
+        el('#recording-indicator').classList.add('hidden');
+        el('#video-record-btn').style.display = 'inline-flex';
+        el('#video-stop-btn').style.display = 'none';
+        
+        updateVideoUI();
+        showToast('Video recorded successfully', 'success');
+      };
+      
+      mediaRecorder.start(1000);
+      isRecording = true;
+      el('#recording-indicator').classList.remove('hidden');
+      el('#video-record-btn').style.display = 'none';
+      el('#video-stop-btn').style.display = 'inline-flex';
+      showToast('Recording started', 'info');
+      
+      // Auto-stop after 60 seconds
+      setTimeout(() => {
+        if (isRecording && mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+          showToast('Recording stopped automatically after 60 seconds', 'info');
+        }
+      }, 60000);
+      
+    } catch (error) {
+      console.error('Error recording video:', error);
+      showToast('Video recording failed: ' + error.message, 'error');
+    }
+  }
+}
+
+function stopVideoRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    showToast('Recording stopped', 'info');
+  }
+}
+
+/* ==========================
    Mock AI analysis for multiple photos
    ========================== */
 function mockMultiPhotoAIAnalyze(photos) {
@@ -2366,8 +2515,8 @@ function mockMultiPhotoAIAnalyze(photos) {
   const breeds = ["Holstein", "Jersey", "Angus", "Hereford", "Brahman", "Simmental"];
   const randomBreed = breeds[Math.floor(Math.random() * breeds.length)];
   
-  // Random weight between 350-550 kg
-  const randomWeight = Math.floor(Math.random() * 200) + 350;
+  // Weight categories: Normal, Abnormal, Low
+  const weightCategories = ["Normal", "Abnormal", "Low"];
   
   // With multiple photos, accuracy improves
   const baseConfidence = 0.7 + (photoCount * 0.05); // Each photo adds 5% confidence
@@ -2389,24 +2538,24 @@ function mockMultiPhotoAIAnalyze(photos) {
     }
     
     // Determine weight score from this angle
-    if (rnd < 0.2) {
+    if (rnd < 0.15) {
       weightScores.push("Low");
-    } else if (rnd < 0.4) {
-      weightScores.push("High");
+    } else if (rnd < 0.35) {
+      weightScores.push("Abnormal");
     } else {
       weightScores.push("Normal");
     }
   }
   
   // Determine overall weight score (majority vote)
-  const weightCounts = { "Low": 0, "Normal": 0, "High": 0 };
+  const weightCounts = { "Normal": 0, "Abnormal": 0, "Low": 0 };
   weightScores.forEach(score => weightCounts[score]++);
   
   let overallWeightScore = "Normal";
-  if (weightCounts["Low"] > weightCounts["Normal"] && weightCounts["Low"] > weightCounts["High"]) {
+  if (weightCounts["Low"] > weightCounts["Normal"] && weightCounts["Low"] > weightCounts["Abnormal"]) {
     overallWeightScore = "Low";
-  } else if (weightCounts["High"] > weightCounts["Normal"] && weightCounts["High"] > weightCounts["Low"]) {
-    overallWeightScore = "High";
+  } else if (weightCounts["Abnormal"] > weightCounts["Normal"] && weightCounts["Abnormal"] > weightCounts["Low"]) {
+    overallWeightScore = "Abnormal";
   }
   
   // Determine overall health
@@ -2426,9 +2575,8 @@ function mockMultiPhotoAIAnalyze(photos) {
     weight_score: overallWeightScore,
     confidence: parseFloat(confidence),
     breed_detected: randomBreed,
-    estimated_weight: `${randomWeight} kg`,
+    estimated_weight: `${Math.floor(Math.random() * 200) + 350} kg`,
     overall_health: overallHealth,
-    temperature_estimated: "38.5°C",
     hydration_level: woundDetected ? "Low" : "Good",
     movement_score: woundDetected ? "Restricted" : "Active",
     photos_analyzed: photoCount,
@@ -2436,8 +2584,53 @@ function mockMultiPhotoAIAnalyze(photos) {
   };
 }
 
+/* Mock video analysis */
+function mockVideoAIAnalyze(videoBlob) {
+  // Random breed selection
+  const breeds = ["Holstein", "Jersey", "Angus", "Hereford", "Brahman", "Simmental"];
+  const randomBreed = breeds[Math.floor(Math.random() * breeds.length)];
+  
+  // Weight categories: Normal, Abnormal, Low
+  const weightCategories = ["Normal", "Abnormal", "Low"];
+  const randomWeightScore = weightCategories[Math.floor(Math.random() * weightCategories.length)];
+  
+  // Random results for video analysis
+  const woundDetected = Math.random() < 0.2;
+  const woundLocation = woundDetected ? "hind leg" : null;
+  
+  let overallHealth = "Good";
+  if (woundDetected) {
+    overallHealth = "Critical";
+  } else if (randomWeightScore !== "Normal") {
+    overallHealth = "Warning";
+  }
+  
+  // Video-specific analysis
+  const movementScore = woundDetected ? "Restricted" : 
+                       (Math.random() < 0.3 ? "Slightly impaired" : "Normal");
+  
+  const behaviorAnalysis = woundDetected ? "Favoring one leg" : 
+                          (Math.random() < 0.25 ? "Possible stiffness detected" : "Normal gait pattern");
+  
+  return {
+    wound_detected: woundDetected,
+    wound_location: woundLocation,
+    weight_score: randomWeightScore,
+    confidence: (Math.random() * 0.2 + 0.8).toFixed(2),
+    breed_detected: randomBreed,
+    estimated_weight: `${Math.floor(Math.random() * 200) + 350} kg`,
+    overall_health: overallHealth,
+    hydration_level: woundDetected ? "Low" : "Good",
+    movement_score: movementScore,
+    behavior_analysis: behaviorAnalysis,
+    video_duration: `${Math.floor(Math.random() * 30) + 10} seconds`,
+    motion_patterns: movementScore === "Normal" ? "Smooth movement" : "Irregular gait detected",
+    analysis_method: "Video motion analysis"
+  };
+}
+
 /* ==========================
-   Camera modal with multi-photo upload
+   Camera modal with multi-photo upload and video recording
    ========================== */
 let scanInProgress = false;
 let currentCameraTargetId = null; // animal id when triggered from profile
@@ -2448,6 +2641,7 @@ async function openCameraModal(mode='scan', targetId=null){
   
   // Reset photo uploads
   clearPhotos();
+  currentVideoBlob = null;
   
   el('#modal-camera').classList.remove('hidden');
   el('#modal-camera').ariaHidden = 'false';
@@ -2461,10 +2655,16 @@ async function openCameraModal(mode='scan', targetId=null){
   el('#photo-mode-content').classList.remove('hidden');
   el('#video-mode-content').classList.add('hidden');
   
-  // Update instruction text based on target
-  const instruction = targetId ? 
-    'Upload multiple photos of this cattle for detailed analysis' : 
-    'Upload multiple photos of cattle for identification and analysis';
+  // Reset video UI
+  el('#camera-video').style.display = 'block';
+  el('#video-playback').style.display = 'none';
+  el('#recording-indicator').classList.add('hidden');
+  el('#video-record-btn').style.display = 'inline-flex';
+  el('#video-stop-btn').style.display = 'none';
+  
+  // Update UI
+  updatePhotoUploadUI();
+  updateVideoUI();
   
   // Don't start camera for photo mode (upload only)
   const video = el('#camera-video');
@@ -2472,9 +2672,6 @@ async function openCameraModal(mode='scan', targetId=null){
     video.srcObject.getTracks().forEach(track => track.stop());
     video.srcObject = null;
   }
-  
-  // Update UI
-  updatePhotoUploadUI();
 }
 
 /* Close camera modal */
@@ -2497,6 +2694,7 @@ function closeCameraModal(){
   isRecording = false;
   recordedChunks = [];
   clearPhotos();
+  currentVideoBlob = null;
 }
 
 /* Switch camera mode */
@@ -2551,17 +2749,18 @@ el('#mode-video').addEventListener('click', async function() {
     });
     video.srcObject = cameraStream;
     video.play();
-    el('#camera-instruction').textContent = 'Record a video or upload existing video of cattle';
+    el('#video-instruction').textContent = 'Record a video or upload existing video of cattle for movement analysis';
   } catch(e) {
     video.srcObject = null;
     console.warn('Camera not available, use file upload fallback', e);
-    el('#camera-instruction').textContent = 'Camera not available. Please upload a video instead.';
+    el('#video-instruction').textContent = 'Camera not available. Please upload a video instead.';
     el('#video-record-btn').disabled = true;
   }
 });
 
 /* File upload handlers */
 el('#file-upload-area').addEventListener('click', () => el('#camera-file-input').click());
+el('#btn-upload-more').addEventListener('click', () => el('#camera-file-input').click());
 
 el('#camera-file-input').addEventListener('change', async function(ev) {
   const files = Array.from(ev.target.files);
@@ -2636,6 +2835,136 @@ el('#file-upload-area').addEventListener('drop', async (e) => {
   showToast(`Added ${imageFiles.length} photo${imageFiles.length !== 1 ? 's' : ''} via drag & drop`, 'success');
 });
 
+/* Video upload button */
+el('#video-upload-btn').addEventListener('click', () => el('#video-file-input').click());
+
+el('#video-file-input').addEventListener('change', async function(ev) {
+  const file = ev.target.files[0]; 
+  if (!file) return;
+  
+  // Validate file type
+  if (!file.type.match('video.*')) {
+    alert('Please select a video file (MP4, MOV, etc.)');
+    return;
+  }
+  
+  // Show preview
+  const videoPlayback = el('#video-playback');
+  videoPlayback.src = URL.createObjectURL(file);
+  videoPlayback.style.display = 'block';
+  el('#camera-video').style.display = 'none';
+  
+  currentVideoBlob = file;
+  updateVideoUI();
+  showToast('Video uploaded successfully', 'success');
+});
+
+/* Video recording controls */
+el('#video-record-btn').addEventListener('click', startVideoRecording);
+el('#video-stop-btn').addEventListener('click', stopVideoRecording);
+
+/* Submit video for analysis */
+el('#video-submit-btn').addEventListener('click', async function() {
+  if (!currentVideoBlob) {
+    showToast('Please record or upload a video first', 'error');
+    return;
+  }
+  
+  if (scanInProgress) return;
+  
+  scanInProgress = true;
+  el('#scan-status').textContent = 'Analyzing video...';
+  
+  // Simulate scanning progress
+  let progress = 0;
+  const progressInterval = setInterval(() => {
+    progress += 5;
+    el('#scan-progress').style.width = progress + '%';
+    if (progress >= 100) {
+      clearInterval(progressInterval);
+    }
+  }, 100);
+  
+  // Run mock video AI analysis
+  setTimeout(async () => {
+    clearInterval(progressInterval);
+    el('#scan-progress').style.width = '100%';
+    
+    const result = mockVideoAIAnalyze(currentVideoBlob);
+    el('#scan-status').textContent = 'Video analysis complete!';
+    
+    // Process results based on context
+    if (currentCameraTargetId){
+      const animal = STATE.animals.find(a=>a.id===currentCameraTargetId);
+      if (!animal) { 
+        showToast('Animal missing', 'error'); 
+        closeCameraModal(); 
+        scanInProgress = false;
+        return; 
+      }
+      
+      // Update animal data
+      animal.weight_score = result.weight_score;
+      animal.health_status = result.overall_health === 'Critical' ? 'Critical' : 
+                           (result.overall_health === 'Warning' ? 'Warning' : 'Good');
+      
+      // Create alert if problem detected
+      if (result.wound_detected || result.weight_score!=='Normal' || result.behavior_analysis.includes("stiffness")){
+        const alertId = 'a'+Math.floor(Math.random()*1000000);
+        const severity = result.wound_detected ? 'High' : 
+                        (result.weight_score==='Low' ? 'Medium' : 'Low');
+        const alertType = result.wound_detected ? 'Wound detected' : 
+                         (result.behavior_analysis.includes("stiffness") ? 'Movement issue' : `${result.weight_score} weight`);
+        
+        const newAlert = { 
+          alert_id: alertId, 
+          animal_id: animal.id, 
+          type: alertType, 
+          severity, 
+          timestamp: (new Date()).toISOString(),
+          message: result.wound_detected ? 
+            `Wound detected on ${result.wound_location}` : 
+            (result.behavior_analysis.includes("stiffness") ? 
+              `Movement issue: ${result.behavior_analysis}` :
+              `Weight status: ${result.weight_score}`)
+        };
+        STATE.alerts.push(newAlert);
+        animal.alerts = animal.alerts || []; 
+        animal.alerts.push(newAlert);
+        
+        // Save state
+        saveState(STATE, currentUser.uid);
+      }
+      
+      renderAllAlerts(); 
+      renderAlertsPreview(); 
+      renderAnimalsList(); 
+      renderStats();
+      
+      // Show results modal
+      setTimeout(() => {
+        closeCameraModal();
+        showScanResults(result, animal);
+      }, 500);
+      
+    } else {
+      // If scanning from dashboard, simulate tag/face recognition
+      let matchedAnimal = null;
+      if (Math.random() < 0.7) {
+        matchedAnimal = STATE.animals[Math.floor(Math.random() * STATE.animals.length)];
+      }
+      
+      // Show results modal
+      setTimeout(() => {
+        closeCameraModal();
+        showScanResults(result, matchedAnimal);
+      }, 500);
+    }
+    
+    scanInProgress = false;
+  }, 3000);
+});
+
 /* Analyze photos button */
 el('#btn-analyze-photos').addEventListener('click', async function() {
   if (scanInProgress) return;
@@ -2684,7 +3013,8 @@ el('#btn-analyze-photos').addEventListener('click', async function() {
       // Create alert if problem detected
       if (result.wound_detected || result.weight_score!=='Normal'){
         const alertId = 'a'+Math.floor(Math.random()*1000000);
-        const severity = result.wound_detected ? 'High' : (result.weight_score==='Low' ? 'Medium' : 'Low');
+        const severity = result.wound_detected ? 'High' : 
+                        (result.weight_score==='Low' ? 'Medium' : 'Low');
         const newAlert = { 
           alert_id: alertId, 
           animal_id: animal.id, 
@@ -2693,7 +3023,7 @@ el('#btn-analyze-photos').addEventListener('click', async function() {
           timestamp: (new Date()).toISOString(),
           message: result.wound_detected ? 
             `Wound detected on ${result.wound_location} (from ${result.photos_analyzed} photos)` : 
-            `Weight: ${result.estimated_weight} (${result.weight_score}) - Multi-photo analysis`
+            `Weight status: ${result.weight_score} - Multi-photo analysis`
         };
         STATE.alerts.push(newAlert);
         animal.alerts = animal.alerts || []; 
@@ -2732,205 +3062,6 @@ el('#btn-analyze-photos').addEventListener('click', async function() {
   }, 3000 + (uploadedPhotos.length * 500)); // Simulate longer processing for more photos
 });
 
-/* Video recording functionality (unchanged from before) */
-el('#video-record-btn').addEventListener('click', async function() {
-  if (!cameraStream) {
-    showToast('Camera not available', 'error');
-    return;
-  }
-  
-  if (!isRecording) {
-    // Start recording
-    try {
-      mediaRecorder = new MediaRecorder(cameraStream, {
-        mimeType: 'video/webm;codecs=vp9'
-      });
-      
-      recordedChunks = [];
-      
-      mediaRecorder.ondataavailable = function(event) {
-        if (event.data.size > 0) {
-          recordedChunks.push(event.data);
-        }
-      };
-      
-      mediaRecorder.onstop = function() {
-        const blob = new Blob(recordedChunks, { type: 'video/webm' });
-        const videoPlayback = el('#video-playback');
-        videoPlayback.src = URL.createObjectURL(blob);
-        videoPlayback.style.display = 'block';
-        el('#camera-video').style.display = 'none';
-        el('#scan-status').textContent = 'Video recorded. Ready for analysis.';
-        isRecording = false;
-        el('#recording-indicator').classList.add('hidden');
-        el('#video-record-btn').innerHTML = '<i class="ri-record-circle-line"></i> Start Recording';
-      };
-      
-      mediaRecorder.start(1000); // Collect data every second
-      isRecording = true;
-      el('#recording-indicator').classList.remove('hidden');
-      el('#video-record-btn').innerHTML = '<i class="ri-stop-circle-line"></i> Stop Recording';
-      el('#scan-status').textContent = 'Recording...';
-      
-      // Auto-stop after 30 seconds
-      setTimeout(() => {
-        if (isRecording && mediaRecorder.state === 'recording') {
-          mediaRecorder.stop();
-        }
-      }, 30000);
-      
-    } catch (error) {
-      console.error('Error recording video:', error);
-      showToast('Video recording failed: ' + error.message, 'error');
-    }
-  } else {
-    // Stop recording
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-      mediaRecorder.stop();
-    }
-  }
-});
-
-/* Video file upload */
-el('#video-use-file').addEventListener('click', ()=>el('#video-file-input').click());
-
-el('#video-file-input').addEventListener('change', async function(ev) {
-  const file = ev.target.files[0]; 
-  if (!file) return;
-  
-  // Validate file type
-  if (!file.type.match('video.*')) {
-    alert('Please select a video file (MP4, MOV, etc.)');
-    return;
-  }
-  
-  // Show preview
-  const videoPlayback = el('#video-playback');
-  videoPlayback.src = URL.createObjectURL(file);
-  videoPlayback.style.display = 'block';
-  el('#camera-video').style.display = 'none';
-  el('#scan-status').textContent = 'Video ready for analysis';
-  
-  // Process the video file
-  await processCapturedVideo(file);
-});
-
-/* Process video file */
-async function processCapturedVideo(videoBlob) {
-  if (scanInProgress) return;
-  scanInProgress = true;
-  
-  el('#scan-status').textContent = 'Analyzing video...';
-  
-  // Simulate scanning progress
-  let progress = 0;
-  const progressInterval = setInterval(() => {
-    progress += 10;
-    el('#scan-progress').style.width = progress + '%';
-    if (progress >= 100) {
-      clearInterval(progressInterval);
-    }
-  }, 100);
-  
-  // Simulate video analysis
-  setTimeout(async () => {
-    clearInterval(progressInterval);
-    el('#scan-progress').style.width = '100%';
-    
-    // Mock video analysis results
-    const result = {
-      wound_detected: Math.random() < 0.2,
-      wound_location: Math.random() < 0.2 ? "hind leg" : null,
-      weight_score: ["Normal", "Low", "High"][Math.floor(Math.random() * 3)],
-      confidence: (Math.random() * 0.2 + 0.8).toFixed(2),
-      breed_detected: ["Holstein", "Jersey", "Angus", "Hereford"][Math.floor(Math.random() * 4)],
-      estimated_weight: `${Math.floor(Math.random() * 200) + 350} kg`,
-      overall_health: Math.random() < 0.3 ? "Warning" : "Good",
-      temperature_estimated: "38.5°C",
-      hydration_level: "Good",
-      movement_score: Math.random() < 0.2 ? "Restricted" : "Normal",
-      behavior_analysis: Math.random() < 0.3 ? "Possible lameness detected" : "Normal gait",
-      video_duration: "15 seconds",
-      motion_patterns: "Normal"
-    };
-    
-    if (result.wound_detected) {
-      result.overall_health = "Critical";
-    }
-    
-    el('#scan-status').textContent = 'Video analysis complete!';
-    
-    // Process results
-    if (currentCameraTargetId){
-      const animal = STATE.animals.find(a=>a.id===currentCameraTargetId);
-      if (!animal) { 
-        showToast('Animal missing', 'error'); 
-        closeCameraModal(); 
-        scanInProgress = false;
-        return; 
-      }
-      
-      // Update animal data
-      animal.weight_score = result.weight_score;
-      animal.health_status = result.overall_health === 'Critical' ? 'Critical' : 
-                           (result.overall_health === 'Warning' ? 'Warning' : 'Good');
-      
-      // create alert if problem
-      if (result.wound_detected || result.weight_score!=='Normal' || result.behavior_analysis.includes("lameness")){
-        const alertId = 'a'+Math.floor(Math.random()*1000000);
-        const severity = result.wound_detected ? 'High' : (result.weight_score==='Low' ? 'Medium' : 'Low');
-        const alertType = result.wound_detected ? 'Wound detected' : 
-                         (result.behavior_analysis.includes("lameness") ? 'Movement issue' : `${result.weight_score} weight`);
-        
-        const newAlert = { 
-          alert_id: alertId, 
-          animal_id: animal.id, 
-          type: alertType, 
-          severity, 
-          timestamp: (new Date()).toISOString(),
-          message: result.wound_detected ? 
-            `Wound detected on ${result.wound_location}` : 
-            (result.behavior_analysis.includes("lameness") ? 
-              `Movement issue: ${result.behavior_analysis}` :
-              `Weight: ${result.estimated_weight} (${result.weight_score})`)
-        };
-        STATE.alerts.push(newAlert);
-        animal.alerts = animal.alerts || []; 
-        animal.alerts.push(newAlert);
-        
-        // Save state
-        saveState(STATE, currentUser.uid);
-      }
-      
-      renderAllAlerts(); 
-      renderAlertsPreview(); 
-      renderAnimalsList(); 
-      renderStats();
-      
-      // Show results modal
-      setTimeout(() => {
-        closeCameraModal();
-        showScanResults(result, animal);
-      }, 500);
-      
-    } else {
-      // If scanning from dashboard, simulate tag/face recognition
-      let matchedAnimal = null;
-      if (Math.random() < 0.7) {
-        matchedAnimal = STATE.animals[Math.floor(Math.random() * STATE.animals.length)];
-      }
-      
-      // Show results modal
-      setTimeout(() => {
-        closeCameraModal();
-        showScanResults(result, matchedAnimal);
-      }, 500);
-    }
-    
-    scanInProgress = false;
-  }, 3000);
-}
-
 /* Show scan results modal */
 function showScanResults(result, matchedAnimal){
   // Store results globally for later use
@@ -2954,8 +3085,8 @@ function showScanResults(result, matchedAnimal){
   
   // Determine weight status color
   let weightStatusClass = 'scan-result-good';
-  if (result.weight_score === 'Low') weightStatusClass = 'scan-result-warning';
-  if (result.weight_score === 'High') weightStatusClass = 'scan-result-warning';
+  if (result.weight_score === 'Abnormal') weightStatusClass = 'scan-result-warning';
+  if (result.weight_score === 'Low') weightStatusClass = 'scan-result-danger';
   
   // Build results HTML
   let resultsHTML = '';
@@ -3013,7 +3144,7 @@ function showScanResults(result, matchedAnimal){
       <div class="scan-result-item">
         <div class="scan-result-label">Weight Status</div>
         <div class="scan-result-value ${weightStatusClass}">
-          ${result.weight_score} (${result.estimated_weight})
+          ${result.weight_score}
         </div>
       </div>
       
@@ -3023,8 +3154,8 @@ function showScanResults(result, matchedAnimal){
       </div>
       
       <div class="scan-result-item">
-        <div class="scan-result-label">Estimated Temp</div>
-        <div class="scan-result-value">${result.temperature_estimated}</div>
+        <div class="scan-result-label">Estimated Weight</div>
+        <div class="scan-result-value">${result.estimated_weight}</div>
       </div>
       
       <div class="scan-result-item">
