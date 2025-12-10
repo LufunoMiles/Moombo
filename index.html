@@ -1168,7 +1168,7 @@
     <div class="splash-logo">
       <img src="/cow.png" width="40" alt="">
     </div>
-    <div class="splash-text">M<span style="color: chocolate;">oo</span>mbo</div>
+    <div class="splash-text">M<span style="color: chocolate;">oo</span>mbe</div>
     <div class="splash-subtext">Intelligent Livestock Management</div>
   </div>
 
@@ -1340,7 +1340,7 @@
     <header class="app-header">
       <div class="app-header-content">
         <div>
-          <h1>M<span style="color: chocolate;">oo</span>mbo</h1>
+          <h1>M<span style="color: chocolate;">oo</span>mbe</h1>
           
         </div>
         <div class="header-actions">
@@ -1433,12 +1433,6 @@
           </div>
 
           <div class="profile-stats">
-            <div style="flex:1">
-              <div class="muted small">
-                <i class="ri-weight-line"></i> Weight
-              </div>
-              <div id="profile-weight" style="font-weight:600;margin-top:4px">--</div>
-            </div>
             <div style="flex:1">
               <div class="muted small">
                 <i class="ri-restaurant-line"></i> Last Scan
@@ -1585,7 +1579,7 @@
             </button>
             
             <div class="muted small" style="text-align: center; margin-top: 16px;">
-              Version 1.0.0 • Moombo Livestock AI
+              Version 1.0.0 • Moombe Livestock AI
             </div>
           </div>
         </section>
@@ -2175,7 +2169,7 @@ function renderAnimalsList(){
       <div style="flex:1">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div><strong style="font-size:1rem">${a.name}</strong><div class="muted small" style="margin-top:2px">${a.species} • ${a.tag}</div></div>
-          <div style="text-align:right"><div class="${a.health_status==='Good'?'status-healthy':(a.health_status==='Warning'?'status-warn':'status-critical')}">${a.health_status}</div><div class="muted small" style="margin-top:2px">${a.weight_score}</div></div>
+          <div style="text-align:right"><div class="${a.health_status==='Good'?'status-healthy':(a.health_status==='Warning'?'status-warn':'status-critical')}">${a.health_status}</div></div>
         </div>
       </div>
     `;
@@ -2260,7 +2254,7 @@ function openProfile(animalId){
   el('#profile-name').textContent = animal.name;
   el('#profile-tag').textContent = animal.tag;
   el('#profile-avatar').innerHTML = `<i class="${animal.icon || 'ri-cow-line'}"></i>`;
-  el('#profile-weight').textContent = animal.weight_score;
+  // weight removed: no longer displaying weight status
   el('#profile-lastfeed').textContent = relativeTime(animal.last_feed);
   el('#profile-health').textContent = animal.health_status;
   el('#profile-health').className = animal.health_status==='Good' ? 'status-healthy' : (animal.health_status==='Warning' ? 'status-warn' : 'status-critical');
@@ -2536,36 +2530,28 @@ function mockMultiPhotoAIAnalyze(photos) {
   
   // Generate realistic health data based on scan count
   let woundDetected = false;
-  let weightStatus = "Normal";
   let overallHealth = "Good";
-  
+
   // First scan: usually healthy
   if (STATE.scanCount === 1) {
     woundDetected = Math.random() < 0.1; // 10% chance
-    weightStatus = "Normal";
   }
   // Second scan: might have issues
   else if (STATE.scanCount === 2) {
     woundDetected = Math.random() < 0.3; // 30% chance
-    weightStatus = Math.random() < 0.4 ? "Abnormal" : "Normal";
   }
   // Third scan: higher chance of issues
   else if (STATE.scanCount === 3) {
     woundDetected = Math.random() < 0.5; // 50% chance
-    weightStatus = Math.random() < 0.3 ? "Low" : (Math.random() < 0.5 ? "Abnormal" : "Normal");
   }
   // Subsequent scans: varied
   else {
     woundDetected = Math.random() < 0.25;
-    const weightRand = Math.random();
-    weightStatus = weightRand < 0.1 ? "Low" : (weightRand < 0.4 ? "Abnormal" : "Normal");
   }
-  
-  // Determine overall health
+
+  // Determine overall health (based on wound detection only)
   if (woundDetected) {
     overallHealth = "Critical";
-  } else if (weightStatus !== "Normal") {
-    overallHealth = "Warning";
   }
   
   // Generate results
@@ -2577,12 +2563,10 @@ function mockMultiPhotoAIAnalyze(photos) {
     matched_animal: matchedAnimal,
     wound_detected: woundDetected,
     wound_location: woundDetected ? ["hind leg", "front leg", "back", "side", "neck"][Math.floor(Math.random() * 5)] : null,
-    weight_score: weightStatus,
     confidence: Math.min(confidence, 0.95).toFixed(2),
     breed_detected: breed,
     estimated_weight: `${Math.floor(Math.random() * 200) + 350} kg`,
     overall_health: overallHealth,
-    hydration_level: woundDetected ? "Low" : (Math.random() < 0.2 ? "Slightly Low" : "Good"),
     movement_score: woundDetected ? "Restricted" : "Active",
     photos_analyzed: photoCount,
     analysis_notes: `Analyzed ${photoCount} photos. ${isNewAnimal ? "New cattle detected." : "Matched existing cattle."}`,
@@ -2608,13 +2592,10 @@ function mockVideoAIAnalyze(videoBlob) {
   
   // Health determination
   const woundDetected = Math.random() < 0.25;
-  const weightStatus = Math.random() < 0.2 ? "Low" : (Math.random() < 0.4 ? "Abnormal" : "Normal");
   let overallHealth = "Good";
-  
+
   if (woundDetected) {
     overallHealth = "Critical";
-  } else if (weightStatus !== "Normal") {
-    overallHealth = "Warning";
   }
   
   // Video-specific analysis
@@ -2629,12 +2610,10 @@ function mockVideoAIAnalyze(videoBlob) {
     matched_animal: matchedAnimal,
     wound_detected: woundDetected,
     wound_location: woundDetected ? "hind leg" : null,
-    weight_score: weightStatus,
     confidence: (0.75 + Math.random() * 0.2).toFixed(2),
     breed_detected: breeds[Math.floor(Math.random() * breeds.length)],
     estimated_weight: `${Math.floor(Math.random() * 200) + 350} kg`,
     overall_health: overallHealth,
-    hydration_level: woundDetected ? "Low" : "Good",
     movement_score: movementScore,
     behavior_analysis: behaviorAnalysis,
     video_duration: `${Math.floor(Math.random() * 30) + 10} seconds`,
@@ -2965,32 +2944,28 @@ function processScanResults(result) {
       return; 
     }
     
-    // Update animal data
-    animal.weight_score = result.weight_score;
+    // Update animal data (weight status removed)
     animal.health_status = result.overall_health === 'Critical' ? 'Critical' : 
                          (result.overall_health === 'Warning' ? 'Warning' : 'Good');
     animal.last_feed = new Date().toISOString();
-    
-    // Create alert if problem detected
-    if (result.wound_detected || result.weight_score!=='Normal'){
+
+    // Create alert if problem detected (based on wound detection)
+    if (result.wound_detected){
       const alertId = 'a'+Date.now()+Math.floor(Math.random()*1000);
-      const severity = result.wound_detected ? 'High' : 
-                      (result.weight_score==='Low' ? 'Medium' : 'Low');
+      const severity = 'High';
       const newAlert = { 
         alert_id: alertId, 
         animal_id: animal.id, 
-        type: result.wound_detected ? 'Wound detected' : `${result.weight_score} weight`, 
+        type: 'Wound detected', 
         severity, 
         timestamp: new Date().toISOString(),
-        message: result.wound_detected ? 
-          `Wound detected on ${result.wound_location}` : 
-          `Weight status: ${result.weight_score}`
+        message: `Wound detected on ${result.wound_location}`
       };
       STATE.alerts.push(newAlert);
       animal.alerts = animal.alerts || []; 
       animal.alerts.push(newAlert);
       
-      showToast(`Alert created for ${animal.name}`, result.wound_detected ? 'error' : 'warning');
+      showToast(`Alert created for ${animal.name}`, 'error');
     } else {
       showToast(`${animal.name} is healthy`, 'success');
     }
@@ -3022,7 +2997,6 @@ function processScanResults(result) {
         name: result.suggested_name || result.matched_animal?.name || `Cattle ${STATE.animals.length + 1}`,
         species: result.breed_detected,
         tag: result.tag_number,
-        weight_score: result.weight_score,
         last_feed: new Date().toISOString(),
         health_status: result.overall_health === 'Critical' ? 'Critical' : 
                      (result.overall_health === 'Warning' ? 'Warning' : 'Good'),
@@ -3033,20 +3007,17 @@ function processScanResults(result) {
       STATE.animals.push(newAnimal);
       matchedAnimal = newAnimal;
       
-      // Create alert if problem detected
-      if (result.wound_detected || result.weight_score!=='Normal'){
+      // Create alert if problem detected (wound only)
+      if (result.wound_detected){
         const alertId = 'a'+Date.now()+Math.floor(Math.random()*1000);
-        const severity = result.wound_detected ? 'High' : 
-                        (result.weight_score==='Low' ? 'Medium' : 'Low');
+        const severity = 'High';
         const newAlert = { 
           alert_id: alertId, 
           animal_id: newAnimalId, 
-          type: result.wound_detected ? 'Wound detected' : `${result.weight_score} weight`, 
+          type: 'Wound detected', 
           severity, 
           timestamp: new Date().toISOString(),
-          message: result.wound_detected ? 
-            `Wound detected on ${result.wound_location}` : 
-            `Weight status: ${result.weight_score}`
+          message: `Wound detected on ${result.wound_location}`
         };
         STATE.alerts.push(newAlert);
         newAnimal.alerts.push(newAlert);
@@ -3055,31 +3026,27 @@ function processScanResults(result) {
       showToast(`New cattle added: ${newAnimal.name}`, 'success');
     } else {
       // Update existing matched animal
-      matchedAnimal.weight_score = result.weight_score;
       matchedAnimal.health_status = result.overall_health === 'Critical' ? 'Critical' : 
                                    (result.overall_health === 'Warning' ? 'Warning' : 'Good');
       matchedAnimal.last_feed = new Date().toISOString();
-      
-      // Create alert if problem detected
-      if (result.wound_detected || result.weight_score!=='Normal'){
+
+      // Create alert if problem detected (wound only)
+      if (result.wound_detected){
         const alertId = 'a'+Date.now()+Math.floor(Math.random()*1000);
-        const severity = result.wound_detected ? 'High' : 
-                        (result.weight_score==='Low' ? 'Medium' : 'Low');
+        const severity = 'High';
         const newAlert = { 
           alert_id: alertId, 
           animal_id: matchedAnimal.id, 
-          type: result.wound_detected ? 'Wound detected' : `${result.weight_score} weight`, 
+          type: 'Wound detected', 
           severity, 
           timestamp: new Date().toISOString(),
-          message: result.wound_detected ? 
-            `Wound detected on ${result.wound_location}` : 
-            `Weight status: ${result.weight_score}`
+          message: `Wound detected on ${result.wound_location}`
         };
         STATE.alerts.push(newAlert);
         matchedAnimal.alerts = matchedAnimal.alerts || [];
         matchedAnimal.alerts.push(newAlert);
         
-        showToast(`Alert for ${matchedAnimal.name}`, result.wound_detected ? 'error' : 'warning');
+        showToast(`Alert for ${matchedAnimal.name}`, 'error');
       } else {
         showToast(`${matchedAnimal.name} scanned - All good`, 'success');
       }
@@ -3123,10 +3090,7 @@ function showScanResults(result, matchedAnimal){
     healthStatusIndicator = 'warning';
   }
   
-  // Determine weight status color
-  let weightStatusClass = 'scan-result-good';
-  if (result.weight_score === 'Abnormal') weightStatusClass = 'scan-result-warning';
-  if (result.weight_score === 'Low') weightStatusClass = 'scan-result-danger';
+  // weight status removed from results
   
   // Build results HTML
   let resultsHTML = '';
@@ -3181,12 +3145,6 @@ function showScanResults(result, matchedAnimal){
         </div>
       </div>
       
-      <div class="scan-result-item">
-        <div class="scan-result-label">Weight Status</div>
-        <div class="scan-result-value ${weightStatusClass}">
-          ${result.weight_score}
-        </div>
-      </div>
       
       <div class="scan-result-item">
         <div class="scan-result-label">Breed Detected</div>
@@ -3198,10 +3156,7 @@ function showScanResults(result, matchedAnimal){
         <div class="scan-result-value">${result.estimated_weight}</div>
       </div>
       
-      <div class="scan-result-item">
-        <div class="scan-result-label">Hydration Level</div>
-        <div class="scan-result-value">${result.hydration_level}</div>
-      </div>
+      <!-- Weight Status and Hydration Level removed -->
       
       <div class="scan-result-item">
         <div class="scan-result-label">Movement Score</div>
