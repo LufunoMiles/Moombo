@@ -1634,6 +1634,7 @@
       <div class="center">
         <!-- Photo Mode Content -->
         <div id="photo-mode-content">
+          <video id="photo-camera-preview" autoplay playsinline style="display:none; width:100%; border-radius: 12px; margin-bottom: 12px; background: #000;"></video>
           <div class="upload-instructions">
             <strong>For best analysis:</strong>
             <ul>
@@ -1658,14 +1659,16 @@
           </div>
           
           <input type="file" accept="image/*" id="camera-file-input" multiple>
-          
           <div class="muted small mb8" id="photo-instruction">
             <span id="photos-count-text">0 photos uploaded</span> • Need at least 3 photos
           </div>
-          
+
           <div class="camera-actions">
             <button class="btn-ghost" id="btn-upload-more">
               <i class="ri-folder-upload-line"></i> Upload More
+            </button>
+            <button class="btn-ghost" id="btn-take-photo" disabled>
+              <i class="ri-camera-line"></i> Take Photo
             </button>
             <button class="big-btn" id="btn-analyze-photos" disabled style="opacity: 0.6;">
               <i class="ri-search-eye-line"></i> Analyze Photos
@@ -2661,11 +2664,28 @@ async function openCameraModal(mode='scan', targetId=null){
   updatePhotoUploadUI();
   updateVideoUI();
   
-  // Don't start camera for photo mode (upload only)
-  const video = el('#camera-video');
-  if (video.srcObject) {
-    video.srcObject.getTracks().forEach(track => track.stop());
-    video.srcObject = null;
+  // Try to start camera for photo capture (mobile friendly)
+  const photoPreview = el('#photo-camera-preview');
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'environment',
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      },
+      audio: false
+    });
+    photoPreview.srcObject = cameraStream;
+    photoPreview.style.display = 'block';
+    await photoPreview.play();
+    el('#btn-take-photo').disabled = false;
+    el('#photo-instruction').innerHTML = '<span style="color: var(--muted);">Use camera or upload photos. Minimum 3 photos required</span>';
+  } catch(e) {
+    // Camera not available - fall back to file upload only
+    photoPreview.srcObject = null;
+    photoPreview.style.display = 'none';
+    el('#btn-take-photo').disabled = true;
+    el('#photo-instruction').innerHTML = 'Camera not available — please upload photos from your device';
   }
 }
 
@@ -2693,7 +2713,7 @@ function closeCameraModal(){
 }
 
 /* Switch camera mode */
-el('#mode-photo').addEventListener('click', function() {
+el('#mode-photo').addEventListener('click', async function() {
   if (currentCameraMode === 'photo') return;
   
   currentCameraMode = 'photo';
@@ -2708,13 +2728,25 @@ el('#mode-photo').addEventListener('click', function() {
     el('#recording-indicator').classList.add('hidden');
   }
   
-  // Stop camera stream for photo mode (upload only)
-  const video = el('#camera-video');
-  if (video.srcObject) {
-    video.srcObject.getTracks().forEach(track => track.stop());
-    video.srcObject = null;
+  // Try to start camera for photo mode
+  const photoPreview = el('#photo-camera-preview');
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false
+    });
+    photoPreview.srcObject = cameraStream;
+    photoPreview.style.display = 'block';
+    await photoPreview.play();
+    el('#btn-take-photo').disabled = false;
+    el('#photo-instruction').innerHTML = '<span style="color: var(--muted);">Use camera or upload photos. Minimum 3 photos required</span>';
+  } catch(e) {
+    photoPreview.srcObject = null;
+    photoPreview.style.display = 'none';
+    el('#btn-take-photo').disabled = true;
+    el('#photo-instruction').innerHTML = 'Camera not available — please upload photos from your device';
   }
-  
+
   // Clear photos when switching to photo mode
   clearPhotos();
 });
@@ -2756,6 +2788,33 @@ el('#mode-video').addEventListener('click', async function() {
 /* File upload handlers */
 el('#file-upload-area').addEventListener('click', () => el('#camera-file-input').click());
 el('#btn-upload-more').addEventListener('click', () => el('#camera-file-input').click());
+
+/* Take photo from camera preview */
+el('#btn-take-photo').addEventListener('click', async function() {
+  const video = el('#photo-camera-preview');
+  if (!video || !video.srcObject) {
+    showToast('Camera not available', 'error');
+    return;
+  }
+
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(async (blob) => {
+      if (!blob) return showToast('Failed to capture photo', 'error');
+      const file = new File([blob], `photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      await addPhoto(file);
+      showToast('Photo captured', 'success');
+    }, 'image/jpeg', 0.9);
+  } catch (err) {
+    console.error('Take photo error', err);
+    showToast('Failed to capture photo', 'error');
+  }
+});
 
 el('#camera-file-input').addEventListener('change', async function(ev) {
   const files = Array.from(ev.target.files);
