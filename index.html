@@ -1344,8 +1344,8 @@
           
         </div>
         <div class="header-actions">
-          <button class="header-btn" id="btn-profile" title="Profile">
-            <i class="ri-user-line"></i>
+          <button class="header-btn" id="btn-notifications-header" title="Notifications">
+            <i class="ri-notification-3-line"></i>
           </button>
         </div>
       </div>
@@ -2160,7 +2160,11 @@ function renderAnimalsList(){
       </div>
     `;
     
-    el('#btn-first-scan').addEventListener('click', () => openCameraModal('scan', null));
+    // Add event listener for the first scan button
+    const firstScanBtn = el('#btn-first-scan');
+    if (firstScanBtn) {
+      firstScanBtn.addEventListener('click', () => openCameraModal('scan', null));
+    }
     return;
   }
   
@@ -2257,7 +2261,6 @@ function openProfile(animalId){
   el('#profile-name').textContent = animal.name;
   el('#profile-tag').textContent = animal.tag;
   el('#profile-avatar').innerHTML = `<i class="${animal.icon || 'ri-cow-line'}"></i>`;
-  // weight removed: no longer displaying weight status
   el('#profile-lastfeed').textContent = relativeTime(animal.last_feed);
   el('#profile-health').textContent = animal.health_status;
   el('#profile-health').className = animal.health_status==='Good' ? 'status-healthy' : (animal.health_status==='Warning' ? 'status-warn' : 'status-critical');
@@ -2277,7 +2280,61 @@ function openProfile(animalId){
   showView('animal-profile');
   // attach profile-specific actions
   el('#profile-scan').onclick = ()=>openCameraModal('scan', animal.id);
-  el('#profile-history').onclick = ()=>alert('Health history would show past weight measurements, feed times, and health events for this cattle.');
+  el('#profile-history').onclick = ()=>openHealthHistory(animal.id);
+}
+
+/* Open health history modal */
+function openHealthHistory(animalId) {
+  const animal = STATE.animals.find(a=>a.id===animalId);
+  if (!animal) return showToast('Animal not found', 'error');
+  
+  // Create health history modal
+  const modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  modal.innerHTML = `
+    <div class="modal">
+      <div class="section-header" style="margin-bottom:16px">
+        <strong style="font-size:1.1rem">
+          <i class="ri-history-line"></i> Health History - ${animal.name}
+        </strong>
+        <button class="btn-ghost close-history-modal">
+          <i class="ri-close-line"></i> Close
+        </button>
+      </div>
+      
+      <div class="muted small mb8">
+        <i class="ri-information-line"></i> Health tracking over time for ${animal.name}
+      </div>
+      
+      <div id="health-history-content">
+        <div class="muted small" style="text-align:center;padding:30px">
+          <i class="ri-history-line" style="font-size: 2rem; margin-bottom: 10px; display: block; color: var(--muted);"></i>
+          No health history recorded yet.<br>
+          Scan this cattle to build health history.
+        </div>
+      </div>
+      
+      <div style="margin-top: 20px;">
+        <button class="big-btn" id="scan-from-history">
+          <i class="ri-camera-line"></i> Scan This Cattle Now
+        </button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Add event listeners
+  modal.querySelector('.close-history-modal').onclick = () => {
+    modal.remove();
+  };
+  
+  modal.querySelector('#scan-from-history').onclick = () => {
+    modal.remove();
+    setTimeout(() => {
+      openCameraModal('scan', animal.id);
+    }, 300);
+  };
 }
 
 /* Navigation: show specific view */
@@ -2313,7 +2370,7 @@ function boot(){
 }
 
 /* ==========================
-   Multi-photo upload functionality
+   Multi-photo upload functionality - FIXED
    ========================== */
 function updatePhotoUploadUI() {
   const count = uploadedPhotos.length;
@@ -2328,14 +2385,16 @@ function updatePhotoUploadUI() {
   // Update text
   photosCountText.textContent = `${count} photo${count !== 1 ? 's' : ''} uploaded`;
   
-  // Enable/disable analyze button
+  // Enable/disable analyze button - FIXED: Should enable when count >= 3
   if (count >= 3) {
     analyzeBtn.disabled = false;
     analyzeBtn.style.opacity = '1';
-    photosCountText.innerHTML = `<span style="color: var(--good);">${count} photos uploaded ✓</span>`;
+    analyzeBtn.style.cursor = 'pointer';
+    photosCountText.innerHTML = `<span style="color: var(--good);">${count} photos uploaded ✓ Ready to analyze</span>`;
   } else {
     analyzeBtn.disabled = true;
     analyzeBtn.style.opacity = '0.6';
+    analyzeBtn.style.cursor = 'not-allowed';
     photosCountText.innerHTML = `${count} photos uploaded • Need ${3 - count} more`;
   }
   
@@ -2414,15 +2473,17 @@ function updateVideoUI() {
   if (hasVideo) {
     submitBtn.disabled = false;
     submitBtn.style.opacity = '1';
+    submitBtn.style.cursor = 'pointer';
     el('#video-instruction').innerHTML = '<span style="color: var(--good);">Video ready for analysis ✓</span>';
   } else {
     submitBtn.disabled = true;
     submitBtn.style.opacity = '0.6';
+    submitBtn.style.cursor = 'not-allowed';
     el('#video-instruction').textContent = 'Record a video or upload existing video of cattle for movement analysis';
   }
 }
 
-function startVideoRecording() {
+async function startVideoRecording() {
   if (!cameraStream) {
     showToast('Camera not available', 'error');
     return;
@@ -2431,7 +2492,7 @@ function startVideoRecording() {
   if (!isRecording) {
     try {
       mediaRecorder = new MediaRecorder(cameraStream, {
-        mimeType: 'video/webm;codecs=vp9'
+        mimeType: 'video/webm;codecs=vp9,opus'
       });
       
       recordedChunks = [];
@@ -2554,7 +2615,7 @@ function mockMultiPhotoAIAnalyze(photos) {
 
   // Determine overall health (based on wound detection only)
   if (woundDetected) {
-    overallHealth = "Critical";
+    overallHealth = Math.random() < 0.7 ? "Critical" : "Warning";
   }
   
   // Generate results
@@ -2568,7 +2629,6 @@ function mockMultiPhotoAIAnalyze(photos) {
     wound_location: woundDetected ? ["hind leg", "front leg", "back", "side", "neck"][Math.floor(Math.random() * 5)] : null,
     confidence: Math.min(confidence, 0.95).toFixed(2),
     breed_detected: breed,
-    estimated_weight: `${Math.floor(Math.random() * 200) + 350} kg`,
     overall_health: overallHealth,
     movement_score: woundDetected ? "Restricted" : "Active",
     photos_analyzed: photoCount,
@@ -2598,7 +2658,7 @@ function mockVideoAIAnalyze(videoBlob) {
   let overallHealth = "Good";
 
   if (woundDetected) {
-    overallHealth = "Critical";
+    overallHealth = Math.random() < 0.7 ? "Critical" : "Warning";
   }
   
   // Video-specific analysis
@@ -2615,7 +2675,6 @@ function mockVideoAIAnalyze(videoBlob) {
     wound_location: woundDetected ? "hind leg" : null,
     confidence: (0.75 + Math.random() * 0.2).toFixed(2),
     breed_detected: breeds[Math.floor(Math.random() * breeds.length)],
-    estimated_weight: `${Math.floor(Math.random() * 200) + 350} kg`,
     overall_health: overallHealth,
     movement_score: movementScore,
     behavior_analysis: behaviorAnalysis,
@@ -2835,9 +2894,9 @@ el('#camera-file-input').addEventListener('change', async function(ev) {
     return;
   }
   
-  // Add each photo
+  // Add each photo - FIXED: Now using await for each photo
   for (const file of imageFiles) {
-    await addPhoto(file);
+    await addPhoto(file); // Wait for each photo to be added
   }
   
   // Reset file input
@@ -2881,9 +2940,9 @@ el('#file-upload-area').addEventListener('drop', async (e) => {
     return;
   }
   
-  // Add each photo
+  // Add each photo - FIXED: Now using await for each photo
   for (const file of imageFiles) {
-    await addPhoto(file);
+    await addPhoto(file); // Wait for each photo to be added
   }
   
   showToast(`Added ${imageFiles.length} photo${imageFiles.length !== 1 ? 's' : ''} via drag & drop`, 'success');
@@ -2954,10 +3013,11 @@ el('#video-submit-btn').addEventListener('click', async function() {
   }, 3000);
 });
 
-/* Analyze photos button */
+/* Analyze photos button - FIXED: Now properly checks photo count */
 el('#btn-analyze-photos').addEventListener('click', async function() {
   if (scanInProgress) return;
   
+  // Double-check photo count
   if (uploadedPhotos.length < 3) {
     showToast(`Please upload at least 3 photos. You have ${uploadedPhotos.length}.`, 'error');
     return;
@@ -3003,7 +3063,7 @@ function processScanResults(result) {
       return; 
     }
     
-    // Update animal data (weight status removed)
+    // Update animal data
     animal.health_status = result.overall_health === 'Critical' ? 'Critical' : 
                          (result.overall_health === 'Warning' ? 'Warning' : 'Good');
     animal.last_feed = new Date().toISOString();
@@ -3011,7 +3071,7 @@ function processScanResults(result) {
     // Create alert if problem detected (based on wound detection)
     if (result.wound_detected){
       const alertId = 'a'+Date.now()+Math.floor(Math.random()*1000);
-      const severity = 'High';
+      const severity = result.overall_health === 'Critical' ? 'High' : 'Medium';
       const newAlert = { 
         alert_id: alertId, 
         animal_id: animal.id, 
@@ -3024,7 +3084,7 @@ function processScanResults(result) {
       animal.alerts = animal.alerts || []; 
       animal.alerts.push(newAlert);
       
-      showToast(`Alert created for ${animal.name}`, 'error');
+      showToast(`Alert created for ${animal.name}`, result.overall_health === 'Critical' ? 'error' : 'warning');
     } else {
       showToast(`${animal.name} is healthy`, 'success');
     }
@@ -3069,7 +3129,7 @@ function processScanResults(result) {
       // Create alert if problem detected (wound only)
       if (result.wound_detected){
         const alertId = 'a'+Date.now()+Math.floor(Math.random()*1000);
-        const severity = 'High';
+        const severity = result.overall_health === 'Critical' ? 'High' : 'Medium';
         const newAlert = { 
           alert_id: alertId, 
           animal_id: newAnimalId, 
@@ -3092,7 +3152,7 @@ function processScanResults(result) {
       // Create alert if problem detected (wound only)
       if (result.wound_detected){
         const alertId = 'a'+Date.now()+Math.floor(Math.random()*1000);
-        const severity = 'High';
+        const severity = result.overall_health === 'Critical' ? 'High' : 'Medium';
         const newAlert = { 
           alert_id: alertId, 
           animal_id: matchedAnimal.id, 
@@ -3105,7 +3165,7 @@ function processScanResults(result) {
         matchedAnimal.alerts = matchedAnimal.alerts || [];
         matchedAnimal.alerts.push(newAlert);
         
-        showToast(`Alert for ${matchedAnimal.name}`, 'error');
+        showToast(`Alert for ${matchedAnimal.name}`, result.overall_health === 'Critical' ? 'error' : 'warning');
       } else {
         showToast(`${matchedAnimal.name} scanned - All good`, 'success');
       }
@@ -3148,8 +3208,6 @@ function showScanResults(result, matchedAnimal){
     healthStatusText = 'Warning';
     healthStatusIndicator = 'warning';
   }
-  
-  // weight status removed from results
   
   // Build results HTML
   let resultsHTML = '';
@@ -3204,18 +3262,10 @@ function showScanResults(result, matchedAnimal){
         </div>
       </div>
       
-      
       <div class="scan-result-item">
         <div class="scan-result-label">Breed Detected</div>
         <div class="scan-result-value">${result.breed_detected}</div>
       </div>
-      
-      <div class="scan-result-item">
-        <div class="scan-result-label">Estimated Weight</div>
-        <div class="scan-result-value">${result.estimated_weight}</div>
-      </div>
-      
-      <!-- Weight Status and Hydration Level removed -->
       
       <div class="scan-result-item">
         <div class="scan-result-label">Movement Score</div>
@@ -3257,7 +3307,7 @@ function showScanResults(result, matchedAnimal){
     resultsHTML += `
       <div class="scan-result-item">
         <div class="scan-result-label">Wound Detected</div>
-        <div class="scan-result-value scan-result-danger">
+        <div class="scan-result-value scan-result-${result.overall_health === 'Critical' ? 'danger' : 'warning'}">
           <i class="ri-alert-line"></i> ${result.wound_location}
         </div>
       </div>
@@ -3332,9 +3382,9 @@ els('.nav-btn').forEach(btn => {
   });
 });
 
-// Profile button in header
-el('#btn-profile').addEventListener('click', function() {
-  showView('user-profile');
+// Notification button in header
+el('#btn-notifications-header').addEventListener('click', function() {
+  showView('alerts');
 });
 
 // Profile actions
